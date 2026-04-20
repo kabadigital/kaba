@@ -1,0 +1,241 @@
+body{
+margin:0;
+font-family:Poppins, sans-serif;
+height:100vh;
+background:#f5f7fa;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* CONTAINER */
+
+.login-container{
+display:flex;
+width:900px;
+height:500px;
+background:white;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 15px 40px rgba(0,0,0,0.15);
+}
+
+/* PARTIE GAUCHE */
+
+.welcome-side{
+flex:1;
+background:linear-gradient(
+rgba(0,0,0,0.5),
+rgba(0,0,0,0.6)
+),
+url("villa-login.jpg.jpeg");
+
+background-size:cover;
+background-position:center;
+
+color:white;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+padding:40px;
+}
+
+.welcome-side h1{
+font-size:36px;
+margin-bottom:15px;
+}
+
+.welcome-side p{
+font-size:16px;
+line-height:1.6;
+}
+
+.tagline{
+margin-top:20px;
+font-style:italic;
+opacity:0.9;
+}
+
+/* PARTIE DROITE */
+
+.login-side{
+flex:1;
+display:flex;
+flex-direction:column;
+justify-content:center;
+padding:40px;
+}
+
+.login-side h2{
+margin-bottom:20px;
+}
+
+/* INPUTS */
+
+.login-side input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:14px;
+}
+
+/* BOUTON */
+
+.login-side button{
+width:100%;
+padding:12px;
+background:#ff5a5f;
+border:none;
+color:white;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.login-side button:hover{
+background:#e64b50;
+}
+
+/* REGISTER */
+
+.register-link{
+margin-top:15px;
+font-size:14px;
+}
+
+.register-link a{
+color:#ff5a5f;
+text-decoration:none;
+font-weight:bold;
+}
+
+/* BOUTON ACCUEIL EN HAUT A DROITE */
+
+.home-top-btn{
+
+position:fixed;
+
+top:20px;
+
+right:30px;
+
+background:#2c7be5;
+
+color:white;
+
+padding:10px 18px;
+
+border-radius:8px;
+
+text-decoration:none;
+
+font-weight:bold;
+
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+
+transition:0.3s;
+
+}
+
+.home-top-btn:hover{
+
+background:#1a5dcc;
+
+transform:translateY(-2px);
+
+}
+.logo img {
+  height: 80px;
+}
+.top-bar {
+  position: fixed;      /* 🔥 colle en haut */
+  top: 0;
+  left: 0;
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 15px 25px;
+  background: white;
+
+  z-index: 1000;        /* reste au-dessus */
+}
+.top-bar {
+  padding: 20px 30px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* espace entre logo et texte */
+  text-decoration: none;
+}
+
+.logo img {
+  height: 70px;
+}
+
+.logo span {
+  font-size: 32px;
+  font-weight: 600;
+  color: black;
+  letter-spacing: 2px;
+  font-family: serif;
+}
+.welcome-side {
+  background-image: url("/images/login-bg.jpg"); /* ton image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  color: black; /* pour texte visible */
+  padding: 40px;
+}
+.welcome-side {
+  width: 50%; /* moitié écran */
+  
+  background-image: url("/images/login-bg.jpg");
+  background-size: cover;
+  background-position: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 60px 40px;;
+  color: white;
+}
+
+.welcome-side {
+  position: relative;
+}
+
+.welcome-side * {
+  position: relative;
+}
+.welcome-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center; /* 🔥 centre horizontal */
+
+  padding: 60px 40px;
+  height: 100%;
+}
+.top-content {
+  width: 100%;
+  text-align: center; /* 🔥 centre le logo */
+}
+.social-link {
+  color: white;
+  transition: 0.3s;
+}
+
+.social-link:hover {
+  color: black;
+  transform: translateY(-2px);
+}

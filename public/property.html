@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Détail du bien - KABA</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="property-page">
+
+<header class="main-header">
+  <div class="logo">🏠 KABA</div>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="dashboard.html">Dashboard</a>
+  </nav>
+</header>
+
+<section class="property-container">
+
+  <!-- ================= BADGES ================= -->
+  <div id="badges-container" class="badges-container"></div>
+
+  <!-- ================= TITRE & INFOS ================= -->
+  <h1 id="title"></h1>
+  <p id="location"></p>
+  <p id="surface"></p>
+  <p id="rooms"></p>
+  <p id="price"></p>
+  <p class="views">👁 <span id="views-count">0</span> vues</p>
+
+  <!-- ================= SLIDER UNIQUE (VIDEOS + IMAGES) ================= -->
+  <div class="media-slider">
+
+    <div class="media-track" id="media-track"></div>
+
+    <button class="nav prev" onclick="prevSlide()">❮</button>
+    <button class="nav next" onclick="nextSlide()">❯</button>
+
+    <div class="dots" id="media-dots"></div>
+
+  </div>
+
+  <!-- ================= MESSAGERIE ================= -->
+  <div class="message-box">
+    <h3>💬 Contacter l'agent</h3>
+
+    <textarea 
+      id="message-content" 
+      placeholder="Votre message..."
+    ></textarea>
+
+    <button onclick="sendMessage()">Envoyer</button>
+
+    <div id="messages"></div>
+  </div>
+
+</section>
+
+<script src="script-detail.js"></script>
+
+</body>
+</html>

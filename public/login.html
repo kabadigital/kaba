@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Connexion - Kaba'</title>
+
+<link rel="stylesheet" href="login.css">
+
+</head>
+
+<body>
+
+<!-- BARRE DU HAUT -->
+<div class="top-bar">
+
+<a href="index.html" class="logo">
+  <img src="/images/logo.png.png" alt="Kaba Logo">
+  <span>Kaba'</span>
+</a>
+
+<a href="index.html" class="home-top-btn">Accueil</a>
+
+</div>
+
+
+<div class="login-container">
+
+<!-- PARTIE GAUCHE -->
+<div class="welcome-side">
+
+  <div class="top-content">
+    <h1>Bienvenue sur Kaba' 👋</h1>
+  </div>
+
+  <div class="bottom-content">
+    <p>
+      Découvrez les plus beaux biens immobiliers à Dakar.<br>
+      Maisons, appartements, studios et commerces premium.
+    </p>
+
+    <p class="tagline">
+      Votre futur logement commence ici.
+    </p>
+  </div>
+
+</div>
+
+
+<!-- PARTIE DROITE -->
+<div class="login-side">
+
+<h2>Connexion</h2>
+
+<form id="loginForm">
+
+<input type="email" id="email" placeholder="Email" required>
+
+<input type="password" id="password" placeholder="Mot de passe" required>
+
+<button type="submit">Se connecter</button>
+
+</form>
+
+
+<p class="register-link">
+Pas encore de compte ?  
+<a href="register.html">Créer un compte</a>
+</p>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+
+  e.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try{
+
+    const res = await fetch("http://localhost:3000/login", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+
+      // 🔐 stocker
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.agent.role);
+
+      alert("Connexion réussie");
+
+      // 🔥 redirection
+      if(data.agent.role === "admin"){
+        window.location.href = "admin.html";
+      }else{
+        window.location.href = "dashboard.html";
+      }
+
+    }else{
+      alert(data.message);
+    }
+
+  }catch(err){
+    console.error(err);
+  }
+
+});
+
+</script>
+
+
+</body>
+</html>

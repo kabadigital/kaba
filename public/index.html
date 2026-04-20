@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaba'</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="main-header">
+  <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="/images/logo.png.png" style="height:60px;">
+      <span style="font-size:22px; font-weight:600;">Kaba'</span>
+    </div>
+
+    <div style="display:flex; gap:20px;">
+      <a href="login.html">Connexion</a>
+      <a href="register.html">Inscription</a>
+    </div>
+
+  </div>
+</header>
+
+<!-- ================= HERO VIDEO ================= -->
+<section class="hero-video-section">
+
+  <!-- VIDEO BACKGROUND -->
+  <video autoplay muted loop playsinline class="background-video">
+    <source src="villa-background.mp4" type="video/mp4">
+  </video>
+
+  <!-- OVERLAY -->
+  <div class="video-overlay"></div>
+
+  <!-- CENTER CONTENT -->
+  <div class="hero-content">
+
+    <h1>Trouvez votre bien idéal à Dakar</h1>
+
+    <p class="categories">
+      Maisons • Appartements • Studios • Chambres • Commerces
+    </p>
+
+    <!-- SEARCH BAR -->
+    <div class="search-box">
+      <input type="text" id="search-city" placeholder="📍 Ville (Ex: Dakar)">
+
+      <select id="search-type">
+        <option value="">Vente / Location</option>
+        <option value="Vente">Vente</option>
+        <option value="Location">Location</option>
+      </select>
+
+      <select id="search-propertyType">
+        <option value="">Tous types</option>
+        <option value="Maison">Maison</option>
+        <option value="Appartement">Appartement</option>
+        <option value="Studio">Studio</option>
+        <option value="Chambre">Chambre</option>
+        <option value="Commerce">Commerce</option>
+      </select>
+
+      <input type="number" id="search-price" placeholder="Budget max (FCFA)">
+
+      <button onclick="filtrerBiens()">🔍 Rechercher</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= BIENS DISPONIBLES TITLE ================= -->
+<section class="available-section">
+  <h2 class="available-title">Propriétés récemment ajoutées</h2>
+  <p class="inspiration-text">
+  Chaque maison a une âme, trouvons celle qui vous ressemble ✨
+</p>
+</section>
+
+
+<!-- ================= PROPERTIES ================= -->
+<section class="properties-section">
+  <div class="container">
+  <p class="intro-text reveal"></p>
+  ✨ Découvrez des résidences élégantes qui incarnent la parfaite harmonie entre style, luxe et confort.
+</p>
+<div class="tabs">
+  <button class="tab active" onclick="changerOnglet('biens')">🏠 Biens</button>
+  <button class="tab" onclick="changerOnglet('terrains')">🌍 Terrains</button>
+</div>
+
+<section class="top-properties">
+
+  <h2>🏆 Biens populaires</h2>
+
+  <div id="top-properties" class="properties-grid"></div>
+
+</section>
+    <div id="all-properties" class="properties-grid"></div>
+<div id="top-properties"></div>
+<div class="see-more-container">
+  <button id="load-more-btn" class="see-more-btn">Voir plus</button>
+</div>
+</section>
+
+<!-- ================= SCRIPT ================= -->
+<script src="script-public.js"></script>
+
+</body>
+</html>
+<footer class="footer">
+
+  <div class="footer-container">
+
+    <div class="footer-box">
+      <h3>MODÈLES</h3>
+      <p><a href="#">Design immobilier moderne</a></p>
+      <p><a href="#">Templates premium</a></p>
+    </div>
+
+    <div class="footer-box">
+      <h3>EXTENSIONS</h3>
+      <p><a href="#">Fonctionnalités avancées</a></p>
+      <p><a href="#">Intégrations API</a></p>
+    </div>
+
+    <div class="footer-box">
+      <h3>SUIVEZ-NOUS</h3>
+      <div class="socials">
+  <div class="socials-premium">
+  <div class="footer-socials">
+  <a href="https://x.com/@kaba_luxory" target="_blank">
+    <i class="fa-brands fa-x-twitter"></i>
+  </a>
+
+  <a href="https://instagram.com/kaba_homesprestige" target="_blank">
+    <i class="fa-brands fa-instagram"></i>
+  </a>
+
+  <a href="https://wa.me/221766418810" target="_blank">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+</div>
+
+    <div class="footer-container">
+
+  <div class="footer-box">
+    <h3>MODÈLES</h3>
+    <a href="#">Design immobilier moderne</a>
+    <a href="#">Templates premium</a>
+  </div>
+
+  <div class="footer-box">
+    <h3>EXTENSIONS</h3>
+    <a href="#">Fonctionnalités avancées</a>
+    <a href="#">Intégrations API</a>
+  </div>
+
+  <div class="footer-box">
+    <h3>TRAVAILLEZ AVEC NOUS</h3>
+    <a href="#">Création de site web</a>
+    <a href="#">Solutions digitales</a>
+  </div>
+
+  <div class="footer-box">
+    <h3>CONTACTEZ-NOUS</h3>
+    <p>📧 kaba@gmail.com</p>
+    <p>📞 76 641 88 10</p>
+  </div>
+
+</div>
+
+  <div class="footer-bottom">
+                             Kaba,Inc
+Cité fadia Dakar © 2026 KABA - Groupe fleurs de saba Tous droits réservés
+    Condition d'utilisation.
+  </div>
+
+</footer>

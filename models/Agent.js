@@ -1,0 +1,17 @@
+const mongoose = require("mongoose");
+
+const agentSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+  role: {
+    type: String,
+    enum: ["agent", "courtier"],
+    default: "agent"
+  },
+  whatsapp: String,
+  phone: String,
+  profileImage: String
+});
+
+module.exports = mongoose.model("Agent", agentSchema);

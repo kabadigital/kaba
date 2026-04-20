@@ -1,0 +1,349 @@
+const API = "http://localhost:3000";
+
+let tousLesBiens = [];
+
+let page = 1;
+const limit = 12;
+
+document.addEventListener("DOMContentLoaded", () => {
+  chargerBiens(true);
+});
+
+/* ================= CHARGER BIENS ================= */
+
+async function chargerBiens(reset = false) {
+  try {
+
+    const btn = document.getElementById("load-more-btn");
+
+    if (reset) {
+      page = 1;
+      tousLesBiens = [];
+      document.getElementById("all-properties").innerHTML = "";
+      btn.style.display = "block"; // 🔥 toujours visible au début
+    }
+
+    const res = await fetch(`${API}/public/properties?page=${page}&limit=${limit}`);
+    const biens = await res.json();
+
+    // 🔥 sécurité (évite ton erreur "filter is not a function")
+    if (!Array.isArray(biens)) {
+      console.error("Réponse API invalide :", biens);
+      return;
+    }
+
+    // 🔥 ajouter sans supprimer anciens
+    tousLesBiens = [...tousLesBiens, ...biens];
+
+    filtrerParOnglet();
+
+    // 🔥 cacher seulement si vraiment plus rien
+    if (biens.length === 0) {
+      btn.style.display = "none";
+    } else {
+      btn.style.display = "block";
+    }
+
+  } catch (err) {
+    console.error(err);
+
+    document.getElementById("all-properties").innerHTML =
+      "<p style='text-align:center'>Impossible de charger les biens.</p>";
+  }
+}
+
+/* ================= AFFICHAGE BIENS ================= */
+
+function afficherBiens(biens, append = false) {
+
+  const container = document.getElementById("all-properties");
+
+  // 🔥 IMPORTANT
+  if (!append) {
+    container.innerHTML = "";
+  }
+
+  if (!biens.length) {
+    container.innerHTML =
+      "<p style='text-align:center;font-size:18px;'>Aucun bien trouvé.</p>";
+    return;
+  }
+
+  const now = new Date();
+
+  biens.forEach(b => {
+
+    const div = document.createElement("div");
+    div.className = "property-card reveal";
+
+    /* INCREMENTER VUES AU CLIC */
+    div.onclick = () => ajouterVue(b._id);
+
+    const createdDate = new Date(b.createdAt || Date.now());
+    const diffDays = (now - createdDate) / (1000 * 60 * 60 * 24);
+
+    const isNew = diffDays <= 7;
+
+    const newBadge = isNew
+      ? `<span class="badge-new">NOUVEAU</span>`
+      : "";
+
+    /* ================= MEDIA ================= */
+
+    let slides = [];
+
+    // fusion + suppression doublons
+    const medias = [...(b.videos || []), ...(b.images || [])];
+    const uniqueMedias = [...new Set(medias)];
+
+    uniqueMedias.forEach(media => {
+
+      if(media.endsWith(".mp4") || media.endsWith(".webm")){
+        slides.push(`
+          <video class="property-video" autoplay muted loop playsinline>
+            <source src="${API}${media}" type="video/mp4">
+          </video>
+        `);
+      } else {
+        slides.push(`
+          <img src="${API}${media}" class="property-img">
+        `);
+      }
+
+    });
+
+    const media = `
+    <div class="media-container">
+
+      <div class="media-slider">
+
+        ${slides.map((s,i)=>`
+          <div class="slide ${i===0 ? "active" : ""}">
+            ${s}
+          </div>
+        `).join("")}
+
+      </div>
+
+      <button class="slide-btn prev">‹</button>
+      <button class="slide-btn next">›</button>
+
+      <div class="media-overlay"></div>
+
+      <div class="media-top">
+        <span class="badge-type ${b.propertyType}">${b.propertyType || ""}</span>
+        ${newBadge}
+      </div>
+
+      <div class="price-overlay">
+        ${formatPrice(b.price)} FCFA
+      </div>
+
+    </div>
+    `;
+
+    const agentName = b.agentId?.name || "Agent";
+    const agentPhone = b.agentId?.phone || "";
+    const agentWhatsapp = b.agentId?.whatsapp || "";
+
+    const whatsappBtn = agentWhatsapp
+      ? `<button class="whatsapp"
+           onclick="window.open('https://wa.me/${agentWhatsapp}','_blank')">
+           💬 WhatsApp
+         </button>`
+      : "";
+
+    div.innerHTML = `
+
+      ${media}
+
+      <div class="property-body">
+
+        <h3>${b.title || ""}</h3>
+
+        <p class="location">
+          📍 ${b.city || ""} - ${b.neighborhood || ""}
+        </p>
+
+        <p class="type">
+          📌 ${b.type || ""}
+        </p>
+
+        <p class="views">
+          👁 ${b.views || 0} vues
+        </p>
+        <p class="time">
+  🕒 ${timeAgo(b.createdAt)}
+</p>
+
+        ${
+          b.propertyType === "Terrain"
+            ? `<p class="surface">📐 ${b.surface || 0} m²</p>`
+            : `<p class="details">🛏️ ${b.bedrooms || 0} | 🚿 ${b.bathrooms || 0}</p>`
+        }
+
+        <div class="agent-box">
+          <span>👤 ${agentName}</span>
+          <span>📞 ${agentPhone}</span>
+        </div>
+
+        <div class="contact-actions">
+          ${whatsappBtn}
+        </div>
+
+      </div>
+    `;
+
+    container.appendChild(div);
+
+  });
+
+  /* 🔥 LANCER ANIMATION */
+  initReveal();
+}
+
+/* ================= SLIDER ================= */
+
+document.addEventListener("click", function(e){
+
+  if(e.target.classList.contains("next")){
+    e.stopPropagation();
+    const container = e.target.parentElement;
+    slide(container,1);
+  }
+
+  if(e.target.classList.contains("prev")){
+    e.stopPropagation();
+    const container = e.target.parentElement;
+    slide(container,-1);
+  }
+
+});
+
+function slide(container,dir){
+
+  const slides = container.querySelectorAll(".slide");
+
+  let index = 0;
+
+  slides.forEach((s,i)=>{
+    if(s.classList.contains("active")){
+      index = i;
+      s.classList.remove("active");
+    }
+  });
+
+  index += dir;
+
+  if(index < 0) index = slides.length-1;
+  if(index >= slides.length) index = 0;
+
+  slides[index].classList.add("active");
+}
+
+/* ================= AJOUTER VUE ================= */
+
+async function ajouterVue(id){
+  try{
+    await fetch(`${API}/properties/${id}/view`,{
+      method:"PUT"
+    });
+  }catch(e){
+    console.error(e);
+  }
+}
+
+/* ================= RECHERCHE ================= */
+
+function filtrerBiens(){
+
+  const city = document.getElementById("search-city").value.toLowerCase();
+  const type = document.getElementById("search-type").value;
+  const propertyType = document.getElementById("search-propertyType").value;
+  const maxPrice = document.getElementById("search-price").value;
+
+  const resultats = tousLesBiens.filter(b=>{
+
+    const matchCity = city ? b.city?.toLowerCase().includes(city) : true;
+    const matchType = type ? b.type === type : true;
+    const matchPropertyType = propertyType ? b.propertyType === propertyType : true;
+    const matchPrice = maxPrice ? Number(b.price) <= Number(maxPrice) : true;
+
+    return matchCity && matchType && matchPropertyType && matchPrice;
+  });
+
+  afficherBiens(resultats);
+}
+
+/* ================= FORMAT PRIX ================= */
+
+function formatPrice(price){
+  if(!price) return "0";
+  return Number(price).toLocaleString("fr-FR");
+}
+
+/* ================= ANIMATION SCROLL ================= */
+
+function initReveal(){
+
+  const elements = document.querySelectorAll(".reveal");
+
+  const observer = new IntersectionObserver(entries => {
+
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add("active");
+      }
+    });
+
+  }, { threshold: 0.2 });
+
+  elements.forEach(el => observer.observe(el));
+}
+/* ================= ONGLET BIENS / TERRAINS ================= */
+
+let ongletActuel = "biens";
+
+function changerOnglet(type) {
+  ongletActuel = type;
+
+  // bouton actif
+  document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
+  event.target.classList.add("active");
+
+  filtrerParOnglet();
+}
+
+function filtrerParOnglet() {
+  let resultats;
+
+  if (ongletActuel === "terrains") {
+    resultats = tousLesBiens.filter(b => b.propertyType === "Terrain");
+  } else {
+    resultats = tousLesBiens.filter(b => b.propertyType !== "Terrain");
+  }
+
+  afficherBiens(resultats);
+}
+function timeAgo(date) {
+  const now = new Date();
+  const diff = (now - new Date(date)) / 1000; // secondes
+
+  if (diff < 60) return "il y a quelques secondes";
+
+  const minutes = Math.floor(diff / 60);
+  if (minutes < 60) return `il y a ${minutes} min`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `il y a ${hours} heure${hours > 1 ? "s" : ""}`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `il y a ${days} jour${days > 1 ? "s" : ""}`;
+
+  const weeks = Math.floor(days / 7);
+  return `il y a ${weeks} semaine${weeks > 1 ? "s" : ""}`;
+}document.getElementById("load-more-btn")
+  ?.addEventListener("click", () => {
+    page++;
+    chargerBiens(); // 🔥 ajoute sans supprimer les anciens
+  });

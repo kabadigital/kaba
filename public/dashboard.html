@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>KABA - Dashboard</title>
+
+<link rel="stylesheet" href="dashboard.css">
+
+</head>
+
+<body>
+
+<header class="main-header">
+  <div class="logo">🏠 KABA</div>
+  <nav>
+    <a href="/">Accueil</a>
+    <a href="#" id="logout-btn">Déconnexion</a>
+  </nav>
+</header>
+
+<section class="dashboard-section">
+<div class="container">
+
+<h2>Mon Dashboard</h2>
+
+<hr>
+
+<!-- ================= FORM ================= -->
+
+<form id="add-property-form" enctype="multipart/form-data">
+
+<h3>Ajouter un bien</h3>
+
+<input type="text" name="title" placeholder="Titre" required>
+<input type="text" name="city" placeholder="Ville" required>
+<input type="text" name="neighborhood" placeholder="Quartier" required>
+
+<select name="type" required>
+  <option value="">Vente / Location</option>
+  <option value="Vente">Vente</option>
+  <option value="Location">Location</option>
+</select>
+
+<select name="propertyType" id="propertyType" required>
+  <option value="">Type</option>
+  <option value="Maison">Maison</option>
+  <option value="Appartement">Appartement</option>
+  <option value="Studio">Studio</option>
+  <option value="Chambre">Chambre</option>
+  <option value="Commerce">Commerce</option>
+  <option value="Terrain">Terrain</option>
+</select>
+
+<!-- ================= STATUT JURIDIQUE ================= -->
+
+<select name="legalStatus" id="legalStatus">
+  <option value="">Statut juridique (terrain)</option>
+  <option value="Titre Foncier">Titre Foncier (100% sécurisé)</option>
+  <option value="Bail emphytéotique">Bail emphytéotique</option>
+  <option value="Délibération">Délibération / Attribution</option>
+</select>
+
+<!-- ================= CHAMBRES ================= -->
+
+<div id="rooms-section">
+  <input type="number" name="bedrooms" placeholder="Chambres">
+  <input type="number" name="bathrooms" placeholder="SDB">
+</div>
+
+<input type="number" name="surface" placeholder="Superficie m²" required>
+<input type="number" name="price" placeholder="Prix FCFA" required>
+
+<label>Images</label>
+<input type="file" name="images" multiple accept="image/*">
+
+<label>Vidéos</label>
+<input type="file" name="videos" multiple accept="video/*">
+
+<label class="premium-checkbox">
+  <input type="checkbox" name="isPremium">
+  Mettre en Premium ⭐
+</label>
+
+<button type="submit">Publier</button>
+
+</form>
+
+<hr>
+
+<h3>Mes biens</h3>
+
+<div id="my-properties" class="properties-grid"></div>
+
+</div>
+</section>
+
+
+<script src="script-dashboard.js"></script>
+
+
+<!-- ================= SCRIPT UI ================= -->
+
+<script>
+
+// Gestion affichage terrain
+const propertyType = document.getElementById("propertyType");
+const roomsSection = document.getElementById("rooms-section");
+const legalStatus = document.getElementById("legalStatus");
+
+// cacher au départ
+legalStatus.style.display = "none";
+
+propertyType.addEventListener("change", () => {
+
+  if(propertyType.value === "Terrain"){
+    roomsSection.style.display = "none";
+    legalStatus.style.display = "block";
+  } else {
+    roomsSection.style.display = "block";
+    legalStatus.style.display = "none";
+  }
+
+});
+
+</script>
+
+
+<!-- ================= SCRIPT SUPPRESSION (UI) ================= -->
+
+<script>
+
+document.addEventListener("click", function(e){
+
+if(e.target.classList.contains("delete-btn")){
+
+const card = e.target.closest(".property-card");
+
+if(confirm("Supprimer ce bien ?")){
+card.remove();
+}
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

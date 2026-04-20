@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription - KABA</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<a href="index.html" class="home-top-btn">Accueil</a>
+<div class="top-right-logo">
+  <img src="/images/logo.png.png" alt="Kaba Logo">
+  <span class="logo-text">Kaba'</span>
+</div>
+<div class="register-page">
+
+<div class="register-container">
+  <h2>Créer un compte</h2>
+
+  <form id="registerForm" enctype="multipart/form-data">
+
+    <!-- INFOS COMMUNES -->
+    <input type="text" name="name" placeholder="Nom complet" required>
+
+    <input type="email" name="email" placeholder="Email" required>
+
+    <input type="text" name="phone" placeholder="Numéro de téléphone" required>
+
+    <input type="password" name="password" placeholder="Mot de passe" required>
+
+    <!-- ROLE -->
+    <select name="role" id="roleSelect" required>
+      <option value="">Choisir votre profil</option>
+      <option value="courtier">Courtier</option>
+      <option value="agent">Agent immobilier</option>
+    </select>
+
+    <!-- SECTION AGENT (CACHÉE PAR DÉFAUT) -->
+    <div id="agentSection" style="display:none;">
+
+      <h4>Informations légales (Agent uniquement)</h4>
+
+      <input type="text" name="registreCommerce" placeholder="Numéro Registre de Commerce">
+
+      <input type="text" name="ninea" placeholder="NINEA (Numéro fiscal)">
+
+      <input type="text" name="adressePhysique" placeholder="Adresse physique de l'agence">
+
+      <label>Document de vérification (PDF)</label>
+      <input type="file" name="documentVerification" accept=".pdf">
+
+    </div>
+
+    <button type="submit">S'inscrire</button>
+
+  </form>
+
+  <p>Déjà un compte ? <a href="login.html">Se connecter</a></p>
+
+</div>
+
+<script>
+
+/* ================= AFFICHER CHAMPS AGENT ================= */
+const roleSelect = document.getElementById("roleSelect");
+const agentSection = document.getElementById("agentSection");
+
+roleSelect.addEventListener("change", () => {
+  if (roleSelect.value === "agent") {
+    agentSection.style.display = "block";
+  } else {
+    agentSection.style.display = "none";
+  }
+});
+
+
+/* ================= ENVOI FORMULAIRE ================= */
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const formData = new FormData(this);
+
+  try {
+    const res = await fetch("http://localhost:5000/register", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+      alert("Compte créé avec succès !");
+      window.location.href = "login.html";
+    } else {
+      alert(data.message);
+    }
+
+  } catch(err){
+    console.error(err);
+    alert("Erreur serveur");
+  }
+
+});
+
+</script>
+
+</body>
