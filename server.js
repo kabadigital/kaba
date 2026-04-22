@@ -1,3 +1,7 @@
+process.on("uncaughtException", err => {
+  console.error("🔥 Uncaught Exception:", err);
+});
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -6,10 +10,21 @@ const fs = require("fs");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 3000;
+
+/* ============================= ROUTE HEALTH CHECK ============================= */
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
+});
 
 /* DOSSIER UPLOADS */
 const uploadDir = path.join(__dirname, "uploads");
@@ -23,9 +38,21 @@ app.use("/uploads", express.static(uploadDir));
 app.use(express.static(path.join(__dirname, "public")));
 
 /* ============================= CONNEXION MONGODB ============================= */
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connecté"))
-  .catch(err => console.error("❌ Erreur MongoDB :", err));
+
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 10000
+})
+.then(() => {
+  console.log("✅ MongoDB connecté");
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+
+})
+.catch(err => {
+  console.error("❌ MongoDB error :", err);
+});
 
 /* ============================= CONFIGURATION MULTER ============================= */
 const storage = multer.diskStorage({
@@ -33,6 +60,38 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
 });
 const upload = multer({ storage });
+
+/* ============================= UPLOAD CLOUDINARY ============================= */
+
+app.post("/upload", upload.single("file"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Aucun fichier envoyé" });
+    }
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "kaba"
+    });
+
+    // suppression du fichier local après upload
+    if (req.file.path) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    res.json({
+      url: result.secure_url,
+      type: result.resource_type
+    });
+
+  } catch (err) {
+    console.error("Upload error:", err);
+
+    res.status(500).json({
+      message: "Erreur upload Cloudinary",
+      error: err.message
+    });
+  }
+});
 
 /* ============================= MODELE AGENT ============================= */
 const agentSchema = new mongoose.Schema({
@@ -339,8 +398,6 @@ app.delete("/properties/:id", auth, async (req, res) => {
   }
 });
 
-/* ============================= LANCEMENT SERVEUR ============================= */
-app.listen(PORT, () => console.log(`🚀 Kaba lancé sur http://localhost:${PORT}`));
 /* ================= ADMIN DATA ================= */
 
 app.get("/admin/data", async (req, res) => {

@@ -1,9 +1,62 @@
-const API = "http://localhost:3000";
+const API = "https://kaba.onrender.com";
 
 let tousLesBiens = [];
 
 let page = 1;
 const limit = 12;
+
+let uploadedMedia = []; // stockage temporaire
+
+async function uploadToCloudinary() {
+
+  const files = document.getElementById("mediaFiles").files;
+  const status = document.getElementById("uploadStatus");
+
+  if (!files.length) {
+    alert("Sélectionne des fichiers !");
+    return;
+  }
+
+  uploadedMedia = [];
+  status.innerHTML = "⏳ Upload en cours...";
+
+  for (let file of files) {
+
+  // 👇 ICI TU AJOUTES LA VALIDATION
+  if (!file.type.startsWith("image") && !file.type.startsWith("video")) {
+    console.warn("Fichier ignoré :", file.name);
+    continue;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+    try {
+
+      const res = await fetch(`${API}/upload`, {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (!data.url) {
+        console.error("Erreur upload backend :", data);
+        continue;
+      }
+
+      uploadedMedia.push({
+        url: data.url,
+        type: data.type
+      });
+
+    } catch (err) {
+      console.error("Upload error:", err);
+    }
+  }
+
+  status.innerHTML = `✅ Upload terminé (${uploadedMedia.length} fichiers)`;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   chargerBiens(true);
@@ -24,7 +77,11 @@ async function chargerBiens(reset = false) {
     }
 
     const res = await fetch(`${API}/public/properties?page=${page}&limit=${limit}`);
-    const biens = await res.json();
+const data = await res.json();
+
+const biens = Array.isArray(data)
+  ? data
+  : (data.biens || data.properties || []);
 
     // 🔥 sécurité (évite ton erreur "filter is not a function")
     if (!Array.isArray(biens)) {
@@ -101,12 +158,12 @@ function afficherBiens(biens, append = false) {
       if(media.endsWith(".mp4") || media.endsWith(".webm")){
         slides.push(`
           <video class="property-video" autoplay muted loop playsinline>
-            <source src="${API}${media}" type="video/mp4">
+            <source src="${media}" type="video/mp4">
           </video>
         `);
       } else {
         slides.push(`
-          <img src="${API}${media}" class="property-img">
+          <img src="${media}" class="property-img">
         `);
       }
 
@@ -304,12 +361,11 @@ function initReveal(){
 
 let ongletActuel = "biens";
 
-function changerOnglet(type) {
+function changerOnglet(type, e) {
   ongletActuel = type;
 
-  // bouton actif
   document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
+  e.target.classList.add("active");
 
   filtrerParOnglet();
 }

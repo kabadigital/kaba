@@ -90,8 +90,8 @@
   ✨ Découvrez des résidences élégantes qui incarnent la parfaite harmonie entre style, luxe et confort.
 </p>
 <div class="tabs">
-  <button class="tab active" onclick="changerOnglet('biens')">🏠 Biens</button>
-  <button class="tab" onclick="changerOnglet('terrains')">🌍 Terrains</button>
+  <button class="tab active" onclick="changerOnglet('biens', event)">🏠 Biens</button>
+<button class="tab" onclick="changerOnglet('terrains', event)">🌍 Terrains</button>
 </div>
 
 <section class="top-properties">
@@ -101,8 +101,7 @@
   <div id="top-properties" class="properties-grid"></div>
 
 </section>
-    <div id="all-properties" class="properties-grid"></div>
-<div id="top-properties"></div>
+    <div id="top-properties"></div>
 <div class="see-more-container">
   <button id="load-more-btn" class="see-more-btn">Voir plus</button>
 </div>

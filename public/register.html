@@ -30,6 +30,9 @@
 
     <input type="password" name="password" placeholder="Mot de passe" required>
 
+    <label>Photo de profil</label>
+<input type="file" name="photo" accept="image/*">
+
     <!-- ROLE -->
     <select name="role" id="roleSelect" required>
       <option value="">Choisir votre profil</option>
@@ -83,7 +86,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   const formData = new FormData(this);
 
   try {
-    const res = await fetch("http://localhost:5000/register", {
+    const res = await fetch("http://localhost:5000/agents/register", {
       method: "POST",
       body: formData
     });
