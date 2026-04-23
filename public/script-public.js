@@ -1,4 +1,4 @@
-const API = "https://kaba.onrender.com";
+const API = "https://api.kaba.digital";
 
 let tousLesBiens = [];
 
