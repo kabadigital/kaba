@@ -1,4 +1,7 @@
-const API = "https://api.kaba.digital";
+const API =
+  location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://api.kaba.digital";
 
 let tousLesBiens = [];
 
@@ -156,21 +159,28 @@ function afficherBiens(biens, append = false) {
   })
   .filter(Boolean);
 
-    uniqueMedias.forEach(media => {
+// 👇 IMPORTANT : on crée uniqueMedias ici
+const uniqueMedias = [...new Set(medias)];
 
-      if(media.endsWith(".mp4") || media.endsWith(".webm")){
-        slides.push(`
-          <video class="property-video" autoplay muted loop playsinline>
-            <source src="${new URL(media, baseURL).href}" type="video/mp4">
-          </video>
-        `);
-      } else {
-        slides.push(`
-          <img src="${new URL(media, baseURL).href}" class="property-img">
-        `);
-      }
+uniqueMedias.forEach(media => {
 
-    });
+  const fullUrl = media.startsWith("http")
+    ? media
+    : `${baseURL}${media}`;
+
+  if (media.includes(".mp4") || media.includes(".webm")) {
+    slides.push(`
+      <video class="property-video" autoplay muted loop playsinline>
+        <source src="${fullUrl}" type="video/mp4">
+      </video>
+    `);
+  } else {
+    slides.push(`
+      <img src="${fullUrl}" class="property-img">
+    `);
+  }
+
+});
 
     const media = `
     <div class="media-container">
