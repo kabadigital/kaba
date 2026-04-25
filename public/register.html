@@ -86,7 +86,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   const formData = new FormData(this);
 
   try {
-    const res = await fetch("http://localhost:5000/agents/register", {
+    const res = await fetch("https://api.kaba.digital/agents/register", {
       method: "POST",
       body: formData
     });
