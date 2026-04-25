@@ -73,8 +73,9 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     }
 
     const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "kaba"
-    });
+  folder: "kaba",
+  resource_type: "auto" // 🔥 IMPORTANT pour les vidéos
+});
 
     // suppression du fichier local après upload
     if (req.file.path) {
