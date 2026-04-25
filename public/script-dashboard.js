@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = "https://api.kaba.digital";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -36,7 +36,9 @@ async function ajouterBien(e) {
   try {
     const res = await fetch(`${API}/properties`, {
       method: "POST",
-      headers: { "Authorization": token },
+      headers: {
+  "Authorization": `Bearer ${token}`
+}
       body: formData
     });
 
