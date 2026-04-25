@@ -57,7 +57,10 @@ mongoose.connect(process.env.MONGO_URI, {
 /* ============================= CONFIGURATION MULTER ============================= */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
+  filename: (req, file, cb) => {
+    const clean = file.originalname.replace(/\s/g, "_");
+    cb(null, Date.now() + "-" + clean);
+  }
 });
 const upload = multer({ storage });
 

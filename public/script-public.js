@@ -1,4 +1,7 @@
-const API = "https://api.kaba.digital";
+const API =
+  location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://api.kaba.digital";
 
 let tousLesBiens = [];
 
@@ -77,11 +80,7 @@ async function chargerBiens(reset = false) {
     }
 
     const res = await fetch(`${API}/public/properties?page=${page}&limit=${limit}`);
-const data = await res.json();
-
-const biens = Array.isArray(data)
-  ? data
-  : (data.biens || data.properties || []);
+    const biens = await res.json();
 
     // 🔥 sécurité (évite ton erreur "filter is not a function")
     if (!Array.isArray(biens)) {
@@ -114,6 +113,8 @@ const biens = Array.isArray(data)
 function afficherBiens(biens, append = false) {
 
   const container = document.getElementById("all-properties");
+
+  const baseURL = "https://api.kaba.digital";
 
   // 🔥 IMPORTANT
   if (!append) {
@@ -158,12 +159,12 @@ function afficherBiens(biens, append = false) {
       if(media.endsWith(".mp4") || media.endsWith(".webm")){
         slides.push(`
           <video class="property-video" autoplay muted loop playsinline>
-            <source src="${media}" type="video/mp4">
+            <source src="${baseURL + media}" type="video/mp4">
           </video>
         `);
       } else {
         slides.push(`
-          <img src="${media}" class="property-img">
+          <img src="${baseURL + media}" class="property-img">
         `);
       }
 
