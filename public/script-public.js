@@ -151,7 +151,8 @@ function afficherBiens(biens, append = false) {
     let slides = [];
 
     // fusion + suppression doublons
-    const medias = [...(b.videos || []), ...(b.images || [])];
+    const medias = [...(b.videos || []), ...(b.images || [])]
+  .map(m => encodeURI(m));
     const uniqueMedias = [...new Set(medias)];
 
     uniqueMedias.forEach(media => {
@@ -159,12 +160,12 @@ function afficherBiens(biens, append = false) {
       if(media.endsWith(".mp4") || media.endsWith(".webm")){
         slides.push(`
           <video class="property-video" autoplay muted loop playsinline>
-            <source src="${baseURL + media}" type="video/mp4">
+            <source src="${new URL(media, baseURL).href}" type="video/mp4">
           </video>
         `);
       } else {
         slides.push(`
-          <img src="${baseURL + media}" class="property-img">
+          <img src="${new URL(media, baseURL).href}" class="property-img">
         `);
       }
 
