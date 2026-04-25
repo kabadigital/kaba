@@ -12,7 +12,7 @@ async function chargerDetail() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
 
-  const res = await fetch("http://localhost:3000/properties/" + id);
+  const res = await fetch("https://api.kaba.digital/properties/" + id);
   const b = await res.json();
 
   buildSlider(b);
@@ -53,7 +53,7 @@ async function chargerDetail() {
 
   /* VUES */
   const viewRes = await fetch(
-    "http://localhost:3000/properties/" + id + "/view",
+    "https://api.kaba.digital/properties/" + id + "/view",
     { method: "PUT" }
   );
 
@@ -99,12 +99,12 @@ function buildSlider(property) {
     if (m.type === "video") {
       element = `
         <video class="slide-media" controls>
-          <source src="http://localhost:3000${m.src}" type="video/mp4">
+          <source src="https://api.kaba.digital${m.src}" type="video/mp4">
         </video>
       `;
     } else {
       element = `
-        <img class="slide-media" src="http://localhost:3000${m.src}">
+        <img src="https://api.kaba.digital${m.src}">
       `;
     }
 
@@ -159,7 +159,7 @@ async function sendMessage() {
   const params = new URLSearchParams(window.location.search);
   const propertyId = params.get("id");
 
-  await fetch("http://localhost:3000/messages", {
+  await fetch("https://api.kaba.digital/messages", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -181,7 +181,7 @@ async function chargerMessages() {
   const propertyId = params.get("id");
 
   const res = await fetch(
-    "http://localhost:3000/messages/" + propertyId,
+    "https://api.kaba.digital/messages/" + propertyId,
     { headers: { "Authorization": token } }
   );
 
