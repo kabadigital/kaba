@@ -166,7 +166,7 @@ uniqueMedias.forEach(media => {
 
   const fullUrl = media.startsWith("http")
     ? media
-    : `${baseURL}${media}`;
+    : `${API}${media}`;
 
   if (media.includes(".mp4") || media.includes(".webm")) {
     slides.push(`
