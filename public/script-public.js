@@ -1,7 +1,4 @@
-const API =
-  location.hostname === "localhost"
-    ? "http://localhost:3000"
-    : "https://api.kaba.digital";
+const API = "https://api.kaba.digital";
 
 let tousLesBiens = [];
 
@@ -152,8 +149,12 @@ function afficherBiens(biens, append = false) {
 
     // fusion + suppression doublons
     const medias = [...(b.videos || []), ...(b.images || [])]
-  .map(m => encodeURI(m));
-    const uniqueMedias = [...new Set(medias)];
+  .map(m => {
+    if (!m) return null;
+    if (m.startsWith("http")) return m;
+    return encodeURI(m);
+  })
+  .filter(Boolean);
 
     uniqueMedias.forEach(media => {
 
