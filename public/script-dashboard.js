@@ -37,8 +37,8 @@ async function ajouterBien(e) {
     const res = await fetch(`${API}/properties`, {
       method: "POST",
       headers: {
-  "Authorization": `Bearer ${token}`
-}
+        "Authorization": `Bearer ${token}`
+      },
       body: formData
     });
 
@@ -76,7 +76,7 @@ async function chargerMesBiens() {
 
     const res = await fetch(`${API}/properties`, {
       headers: {
-        "Authorization": `Bearer ${token}` // 🔥 IMPORTANT
+        "Authorization": `Bearer ${token}`
       }
     });
 
@@ -89,7 +89,6 @@ async function chargerMesBiens() {
       return;
     }
 
-    // 🔥 backend filtre déjà
     const biens = data;
 
     container.innerHTML = "";
@@ -104,7 +103,6 @@ async function chargerMesBiens() {
       const div = document.createElement("div");
       div.className = "property-card";
 
-      /* MEDIA */
       let media = "";
 
       if (b.videos && b.videos.length > 0) {
@@ -119,7 +117,6 @@ async function chargerMesBiens() {
         media = `<div class="no-media">Aucun média</div>`;
       }
 
-      /* HTML */
       div.innerHTML = `
         <div class="media-container">${media}</div>
 
@@ -160,7 +157,9 @@ async function supprimerBien(id) {
   try {
     const res = await fetch(`${API}/properties/${id}`, {
       method: "DELETE",
-      headers: { "Authorization": token }
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
     });
 
     if (res.ok) {
