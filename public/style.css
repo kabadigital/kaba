@@ -6,30 +6,19 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* BODY GLOBAL (INDEX + SITE) */
 body {
   background-color: #f4f7fb;
   color: #333;
   line-height: 1.5;
 }
 
-/* ================= INDEX / ACCUEIL PLUS LUMINEUX ================= */
-/* 👉 n’impacte PAS register-page */
-
-.hero-video-section,
-.properties-section,
-.main-header {
-  filter: brightness(1.05);
+/* ================= LUMIÈRE ACCUEIL (INDEX UNIQUEMENT) ================= */
+.hero-video-section {
+  filter: brightness(1.08);
 }
 
-/* overlay plus léger pour plus de lumière */
 .video-overlay {
-  background: rgba(0,0,0,0.35) !important;
-}
-
-/* texte plus lumineux sur accueil */
-.hero-content h1 {
-  text-shadow: 0 3px 15px rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.38);
 }
 
 /* ================= HEADER ================= */
@@ -40,8 +29,8 @@ body {
   padding: 1rem 2rem;
   background-color: #1e3a8a;
   color: white;
-  z-index: 9999;
   position: relative;
+  z-index: 999;
 }
 
 .main-header nav a {
@@ -55,15 +44,15 @@ body {
   text-decoration: underline;
 }
 
-/* ================= HERO VIDEO ================= */
+/* ================= HERO ================= */
 .hero-video-section {
   position: relative;
   height: 75vh;
   min-height: 550px;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .background-video {
@@ -80,7 +69,6 @@ body {
 .video-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.35);
   z-index: 2;
 }
 
@@ -94,7 +82,7 @@ body {
   padding: 20px;
 }
 
-/* ================= SEARCH BOX ================= */
+/* ================= SEARCH ================= */
 .search-box {
   display: flex;
   gap: 15px;
@@ -123,6 +111,18 @@ body {
   background: #3b82f6;
 }
 
+/* ================= PROPERTIES ================= */
+.properties-section {
+  padding: 80px 20px;
+  background: #ffffff;
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
 /* ================= PROPERTY CARD ================= */
 .property-card {
   background: white;
@@ -136,10 +136,9 @@ body {
   transform: translateY(-8px);
 }
 
-/* MEDIA */
 .media-container {
   position: relative;
-  height: 380px;
+  height: 300px;
   overflow: hidden;
 }
 
@@ -150,10 +149,9 @@ body {
   object-fit: cover;
 }
 
-/* ================= REGISTER PAGE (INCHANGÉE) ================= */
+/* ================= REGISTER (IMPORTANT : inchangé visuellement) ================= */
 .register-page {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -172,6 +170,28 @@ body {
   width: 350px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   text-align: center;
+}
+
+.register-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.register-container button {
+  width: 100%;
+  padding: 12px;
+  background: #2c7be5;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.register-container button:hover {
+  background: #1a5dcc;
 }
 
 /* ================= RESPONSIVE ================= */
