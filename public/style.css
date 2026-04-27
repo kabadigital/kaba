@@ -1442,3 +1442,32 @@ body {
 .video-overlay {
   background: rgba(0,0,0,0.25);
 }
+/* ================= TITRE LUXE NOIR ================= */
+
+.section-title-lux {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0f0f0f;
+
+  text-align: center;
+  letter-spacing: 1px;
+
+  margin-bottom: 10px;
+
+  text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* ================= SOUS-TITRE LUXE ================= */
+
+.section-subtitle-lux {
+  font-size: 16px;
+  color: #2b2b2b;
+
+  text-align: center;
+  font-weight: 400;
+
+  opacity: 0.85;
+  letter-spacing: 0.3px;
+
+  margin-bottom: 40px;
+}
