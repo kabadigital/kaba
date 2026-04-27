@@ -6,39 +6,11 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* ================= BODY GLOBAL (REGISTRE + BASE) ================= */
+/* ================= BODY (INDEX UNIQUEMENT) ================= */
 body {
   background-color: #f4f7fb;
   color: #333;
   line-height: 1.5;
-}
-
-/* ================= INDEX UNIQUEMENT (PLUS LUMINEUX) ================= */
-body.home-page {
-  background: #f7fbff;
-  color: #222;
-}
-
-/* effet lumière index */
-body.home-page .hero-video-section {
-  filter: brightness(1.15) contrast(1.05) saturate(1.1);
-}
-
-/* cartes plus premium sur index */
-body.home-page .property-card {
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-/* header plus clair sur index */
-body.home-page .main-header {
-  background: rgba(255,255,255,0.85);
-  color: #111;
-  backdrop-filter: blur(10px);
-}
-
-/* liens header index */
-body.home-page .main-header a {
-  color: #111 !important;
 }
 
 /* ================= HEADER ================= */
@@ -49,18 +21,6 @@ body.home-page .main-header a {
   padding: 1rem 2rem;
   background-color: #1e3a8a;
   color: white;
-}
-
-.main-header nav a {
-  margin-left: 1.5rem;
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  transition: 0.3s;
-}
-
-.main-header nav a:hover {
-  text-decoration: underline;
 }
 
 /* ================= HERO VIDEO ================= */
@@ -97,14 +57,9 @@ body.home-page .main-header a {
   z-index: 3;
   text-align: center;
   color: white;
-}
-
-/* ================= SEARCH ================= */
-.search-box {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  justify-content: center;
+  max-width: 1000px;
+  width: 100%;
+  padding: 20px;
 }
 
 /* ================= PROPERTIES ================= */
@@ -113,50 +68,88 @@ body.home-page .main-header a {
   background: #ffffff;
 }
 
-.properties-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+.container {
+  max-width: 1200px;
+  margin: auto;
 }
 
 /* ================= CARDS ================= */
 .property-card {
-  background-color: white;
-  border-radius: 12px;
+  background: white;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
-}
-
-.property-card:hover {
-  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+  transition: 0.3s;
 }
 
 /* ================= MEDIA ================= */
 .media-container {
   position: relative;
-  height: 200px;
+  height: 380px;
   overflow: hidden;
 }
 
-.property-img,
-.property-video {
+/* ================= REGISTER PAGE (ISOLÉE - IMPORTANT) ================= */
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=2070&auto=format&fit=crop");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* FORM REGISTER */
+.register-container {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  width: 350px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.register-container input {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.register-container button {
+  width: 100%;
+  padding: 12px;
+  background: #2c7be5;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.register-container button:hover {
+  background: #1a5dcc;
 }
 
 /* ================= WHATSAPP ================= */
 .whatsapp {
-  margin-top: 10px;
-  background-color: #25D366;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px;
-  cursor: pointer;
-  font-weight: 600;
   width: 100%;
+  background: #25D366;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* ================= FOOTER ================= */
+.footer {
+  margin-top: 60px;
+  padding: 50px 20px 20px;
+  background: rgba(30, 58, 138, 0.9);
+  color: white;
 }
 
 /* ================= RESPONSIVE ================= */
@@ -164,42 +157,4 @@ body.home-page .main-header a {
   .hero-content h1 {
     font-size: 28px;
   }
-
-  .search-box {
-    flex-direction: column;
-  }
-
-  .search-box input,
-  .search-box select,
-  .search-box button {
-    width: 100%;
-  }
-
-  .properties-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ================= REGISTER (INTOUCHÉ) ================= */
-/* NE PAS MODIFIER */
-.register-page {
-  margin:0;
-  font-family:'Poppins',sans-serif;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background-image:url("https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=2070&auto=format&fit=crop");
-  background-size:cover;
-  background-position:center;
-  background-repeat:no-repeat;
-}
-
-.register-container {
-  background:white;
-  padding:40px;
-  border-radius:10px;
-  width:350px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-  text-align:center;
 }
