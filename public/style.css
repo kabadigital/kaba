@@ -1441,6 +1441,15 @@ body {
 /* ================= SECTION ULTRA SOMBRE LUXE ================= */
 
 .dark-section {
-  max-width: 900px;   /* 🔥 plus petit que 1200px */
-  margin: 50px auto;  /* centre la section */
+  background: linear-gradient(135deg, #05070f, #0a0f1c, #070a12);
+  padding: 70px 25px;
+  border-radius: 22px;
+
+  margin: 50px auto;
+  max-width: 1200px;
+
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+
+  position: relative;
+  overflow: hidden;
 }
