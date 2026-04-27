@@ -1441,9 +1441,6 @@ body {
 /* ================= SECTION ULTRA SOMBRE LUXE ================= */
 
 .dark-section {
-  max-width: 850px;
-  margin: 60px auto;
-
-  padding: 70px 30px;
-  border-radius: 25px;
+  max-width: 900px;   /* 🔥 plus petit que 1200px */
+  margin: 50px auto;  /* centre la section */
 }
