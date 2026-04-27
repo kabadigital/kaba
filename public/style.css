@@ -1500,3 +1500,119 @@ body.home-page .footer {
   background: #050505;
   border-top: 1px solid rgba(212,175,55,0.2);
 }
+/* ================= BASE ================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* ================= MODE CLAIR ================= */
+
+body.light {
+  background: #f4f7fb;
+  color: #333;
+}
+
+/* ================= MODE DARK LUXE ================= */
+
+body.dark {
+  background: #0b0b0f;
+  color: #ffffff;
+}
+
+/* HEADER ADAPTATIF */
+
+body.light .main-header {
+  background: #1e3a8a;
+  color: white;
+}
+
+body.dark .main-header {
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(12px);
+}
+
+/* CARTES */
+
+body.dark .property-card {
+  background: #111;
+  border: 1px solid rgba(212,175,55,0.2);
+}
+
+/* TEXTES */
+
+body.dark .location,
+body.dark .type {
+  color: #ccc;
+}
+
+/* BADGES */
+
+body.dark .badge,
+body.dark .badge-type {
+  background: rgba(212,175,55,0.1);
+  color: #d4af37;
+  border: 1px solid rgba(212,175,55,0.3);
+}
+
+/* ================= BUTTON AIRBNB STYLE ================= */
+
+.theme-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 16px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* HOVER */
+.theme-switch:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+/* ICON ANIMATION */
+.theme-switch .icon {
+  transition: transform 0.4s ease;
+}
+
+/* MODE DARK ICON ROTATION */
+body.dark .theme-switch .icon {
+  transform: rotate(180deg);
+}
+
+/* STYLE MODE CLAIR */
+body.light .theme-switch {
+  color: #111;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* STYLE MODE DARK */
+body.dark .theme-switch {
+  color: white;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+}
