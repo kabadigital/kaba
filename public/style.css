@@ -1501,26 +1501,12 @@ body {
   color: #000;
   font-weight: 700;
 }
-.agent-avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
 
 .agent-box {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.agent-avatar{
-  width:45px;
-  height:45px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#111;
 }
 .agent-avatar{
   width:50px;
