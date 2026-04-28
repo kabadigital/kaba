@@ -1493,30 +1493,3 @@ body {
   position: relative;
   overflow: hidden;
 }
-.no-wrap {
-  white-space: nowrap;
-  overflow-x: auto;
-  display: block;
-}
-.no-wrap {
-  white-space: nowrap;
-  text-align: center;
-  font-size: 16px;
-  letter-spacing: 0.3px;
-}
-.lux-text {
-  text-align: center;
-  white-space: nowrap; /* reste sur une ligne */
-  font-size: 18px;
-  color: #d4af37; /* doré luxe */
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-@media (max-width: 768px) {
-  .lux-text {
-    white-space: normal; /* retour à la ligne sur mobile */
-    font-size: 16px;
-    padding: 0 15px;
-  }
-}
