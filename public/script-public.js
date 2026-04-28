@@ -131,13 +131,12 @@ function afficherBiens(biens, append = false) {
 
   biens.forEach(b => {
 
-    console.log("BIEN COMPLET 👉", b);
-console.log("PHOTO AGENT 👉", b.agentId);
-
     const agentPhoto =
-  b.agentId?.photo ||
+  b.agentId?.photo?.url ||
+  b.agentId?.photo?.secure_url ||
+  b.agentId?.avatar ||
   localStorage.getItem("profilePhoto") ||
-  "default-avatar.png";
+  "https://i.imgur.com/placeholder-avatar.png";
 
     const div = document.createElement("div");
     div.className = "property-card reveal";
