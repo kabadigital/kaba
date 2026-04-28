@@ -1493,3 +1493,7 @@ body {
   position: relative;
   overflow: hidden;
 }
+.lux-text {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
