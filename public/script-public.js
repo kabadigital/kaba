@@ -132,11 +132,11 @@ function afficherBiens(biens, append = false) {
   biens.forEach(b => {
 
     const agentPhoto =
-  b.agentId?.photo?.url ||
-  b.agentId?.photo?.secure_url ||
-  b.agentId?.avatar ||
-  localStorage.getItem("profilePhoto") ||
-  "https://i.imgur.com/placeholder-avatar.png";
+  b.agentId?.photo
+    ? (b.agentId.photo.startsWith("http")
+        ? b.agentId.photo
+        : `${API}${b.agentId.photo}`)
+    : "https://kaba-dev.onrender.com/default-avatar.png";
 
     const div = document.createElement("div");
     div.className = "property-card reveal";

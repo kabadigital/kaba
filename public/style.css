@@ -1522,3 +1522,11 @@ body {
   object-fit:cover;
   background:#111;
 }
+.agent-avatar{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid gold;
+  box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
