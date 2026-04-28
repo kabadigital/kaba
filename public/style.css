@@ -1516,3 +1516,11 @@ body {
   border:2px solid gold;
   box-shadow:0 0 10px rgba(0,0,0,0.2);
 }
+.agent-avatar{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#fff; /* important */
+  border:2px solid gold;
+}
