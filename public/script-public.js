@@ -136,7 +136,7 @@ function afficherBiens(biens, append = false) {
     ? (b.agentId.photo.startsWith("http")
         ? b.agentId.photo
         : `${API}${b.agentId.photo}`)
-    : "https://kaba-dev.onrender.com/default-avatar.png";
+    : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
 
     const div = document.createElement("div");
     div.className = "property-card reveal";
