@@ -263,12 +263,15 @@ uniqueMedias.forEach(media => {
         }
 
         <div class="agent-box">
-  <img src="${agentPhoto}" class="agent-avatar">
-  
-  <div>
+
+  <div class="agent-text">
     <span>👤 ${agentName}</span><br>
     <span>📞 ${agentPhone}</span>
   </div>
+
+  <img src="${agentPhoto}" class="agent-avatar">
+
+</div>
 </div>
 
         <div class="contact-actions">

@@ -1524,3 +1524,25 @@ body {
   background:#fff; /* important */
   border:2px solid gold;
 }
+.agent-box{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-top:10px;
+  padding:10px;
+  background:#111;
+  border-radius:12px;
+}
+
+.agent-text{
+  color:#fff;
+  font-size:14px;
+}
+
+.agent-avatar{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid gold;
+}
