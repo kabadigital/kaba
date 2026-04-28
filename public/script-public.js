@@ -131,6 +131,9 @@ function afficherBiens(biens, append = false) {
 
   biens.forEach(b => {
 
+    console.log("BIEN COMPLET 👉", b);
+console.log("PHOTO AGENT 👉", b.agentId);
+
     const agentPhoto =
   b.agentId?.photo ||
   localStorage.getItem("profilePhoto") ||
