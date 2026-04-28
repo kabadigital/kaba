@@ -1437,11 +1437,44 @@ body {
   transform: translateY(-6px);
   box-shadow: 0 25px 60px rgba(0,0,0,0.12);
 }
-.dark-section .section-subtitle {
-  color: rgba(255,255,255,0.75);
+/* ================= SECTION SOMBRE LUXE ================= */
+
+.dark-section {
+  background: linear-gradient(135deg, #0b0f19, #111827);
+  padding: 60px 20px;
+  border-radius: 20px;
+
+  margin: 40px auto;
+  max-width: 1200px;
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+/* TITRE */
+.dark-section .section-title {
   text-align: center;
+  color: white;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* PETITE LIGNE LUXE */
+.dark-section .section-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: #d4af37;
+  margin: 10px auto;
+  border-radius: 10px;
+}
+
+/* SOUS-TITRE */
+.dark-section .section-subtitle {
+  text-align: center;
+  color: rgba(255,255,255,0.75);
   font-size: 16px;
-  margin-top: 12px;
-  letter-spacing: 0.5px;
+  margin-top: 10px;
 }
 
