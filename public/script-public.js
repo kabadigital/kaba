@@ -131,6 +131,9 @@ function afficherBiens(biens, append = false) {
 
   biens.forEach(b => {
 
+    console.log("BIEN 👉", b);
+console.log("AGENT 👉", b.agentId);
+
     const agentPhoto =
   b.agentId?.photo
     ? (b.agentId.photo.startsWith("http")
