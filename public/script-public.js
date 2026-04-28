@@ -139,7 +139,7 @@ console.log("AGENT 👉", b.agentId);
     ? (b.agentId.photo.startsWith("http")
         ? b.agentId.photo
         : `${API}${b.agentId.photo}`)
-    : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(b.agentId?.name || "Agent")}&background=000&color=fff`;
 
     const div = document.createElement("div");
     div.className = "property-card reveal";
