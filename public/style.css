@@ -1493,3 +1493,8 @@ body {
   position: relative;
   overflow: hidden;
 }
+.no-wrap {
+  white-space: nowrap;
+  overflow-x: auto;
+  display: block;
+}
