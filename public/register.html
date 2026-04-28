@@ -79,25 +79,43 @@ roleSelect.addEventListener("change", () => {
 });
 
 
-/* ================= ENVOI FORMULAIRE ================= */
 document.getElementById("registerForm").addEventListener("submit", async function(e){
   e.preventDefault();
 
   const formData = new FormData(this);
 
   try {
+
     const res = await fetch("https://api.kaba.digital/agents/register", {
       method: "POST",
       body: formData
     });
 
-    const data = await res.json();
+    const data = await res.json(); // ✅ toujours ici
 
     if(res.ok){
+
+      // 🔥 sauvegarde user
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // 🔥 PHOTO DE PROFIL (local seulement)
+      const photoInput = document.querySelector('input[name="photo"]');
+
+      if (photoInput.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+          localStorage.setItem("profilePhoto", e.target.result);
+        };
+
+        reader.readAsDataURL(photoInput.files[0]);
+      }
+
       alert("Compte créé avec succès !");
       window.location.href = "login.html";
+
     } else {
-      alert(data.message);
+      alert(data.message || "Erreur inscription");
     }
 
   } catch(err){

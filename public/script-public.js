@@ -131,6 +131,11 @@ function afficherBiens(biens, append = false) {
 
   biens.forEach(b => {
 
+    const agentPhoto =
+  b.agentId?.photo ||
+  localStorage.getItem("profilePhoto") ||
+  "default-avatar.png";
+
     const div = document.createElement("div");
     div.className = "property-card reveal";
 
@@ -253,9 +258,13 @@ uniqueMedias.forEach(media => {
         }
 
         <div class="agent-box">
-          <span>👤 ${agentName}</span>
-          <span>📞 ${agentPhone}</span>
-        </div>
+  <img src="${agentPhoto}" class="agent-avatar">
+  
+  <div>
+    <span>👤 ${agentName}</span><br>
+    <span>📞 ${agentPhone}</span>
+  </div>
+</div>
 
         <div class="contact-actions">
           ${whatsappBtn}
