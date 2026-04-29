@@ -159,21 +159,18 @@ async function chargerMesBiens() {
 
   const token = localStorage.getItem("token");
 
-if (!token) {
-  alert("Token absent, reconnecte-toi");
-  window.location.href = "login.html";
-}
+  if (!token) {
+    container.innerHTML = "<p>Non connecté</p>";
+    return;
+  }
 
-const formData = new FormData();
-formData.append("photo", selectedFile);
+  try {
 
-const res = await fetch(`${API}/agents/upload-photo`, {
-  method: "POST",
-  headers: {
-    Authorization: "Bearer " + token.trim()
-  },
-  body: formData
-});
+    const res = await fetch(`${API}/properties`, {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
 
     const data = await res.json();
 
