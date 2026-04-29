@@ -86,8 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       // update UI
-      document.getElementById("profile-photo").src = data.photo;
-      document.getElementById("profile-preview").src = data.photo;
+      const url = "https://kaba-dev.onrender.com" + data.photo;
+
+document.getElementById("profile-photo").src = url;
+document.getElementById("profile-preview").src = url;
 
     } else {
       alert(data.message || "Erreur upload");

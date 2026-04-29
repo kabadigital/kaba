@@ -227,7 +227,7 @@ app.get("/agents", auth, async (req, res) => {
 /* ================= PROFILE PHOTO UPDATE ================= */
 app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) => {
   try {
-
+console.log("AUTH HEADER:", req.headers.authorization);
     console.log("BODY:", req.body);
 console.log("FILE:", req.file);
 console.log("USER:", req.agentId);
