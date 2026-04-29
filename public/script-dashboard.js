@@ -2,6 +2,18 @@ const API = "https://api.kaba.digital";
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
+if (user) {
+  document.getElementById("agent-name").innerText = user.name;
+  document.getElementById("agent-role").innerText = user.role || "Agent";
+
+  document.getElementById("profile-photo").src =
+    user.photo
+      ? "https://kaba-dev.onrender.com" + user.photo
+      : "https://kaba-dev.onrender.com/default-avatar.png";
+}
+
   const token = localStorage.getItem("token");
 
   if (!token) {

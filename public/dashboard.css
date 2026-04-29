@@ -155,3 +155,57 @@ body{
 #legalStatus{
   margin-top:10px;
 }
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+}
+
+.profile-info h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.profile-info p {
+  margin: 5px 0 0;
+  color: #777;
+}
+
+/* STATS */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.stat-card h4 {
+  font-size: 22px;
+  margin: 0;
+}
+
+.stat-card p {
+  margin: 5px 0 0;
+  color: #777;
+}
