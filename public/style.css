@@ -1559,3 +1559,40 @@ body {
   font-weight: 700;
   margin-top: 5px;
 }
+.agent-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.agent-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.agent-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.agent-phone {
+  font-weight: 600;
+  font-size: 14px;
+  color: #444;
+}
+
+.agent-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.25s ease;
+}
+
+.agent-avatar:hover {
+  transform: scale(1.05);
+}
