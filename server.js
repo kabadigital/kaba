@@ -232,15 +232,21 @@ app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) 
       return res.status(400).json({ message: "Aucune image envoyée" });
     }
 
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "kaba/agents"
+    });
+
     const agent = await Agent.findById(req.agentId);
 
     if (!agent) {
       return res.status(404).json({ message: "Agent introuvable" });
     }
 
-    agent.photo = "/uploads/" + req.file.filename;
+    agent.photo = result.secure_url;
 
     await agent.save();
+
+    fs.unlinkSync(req.file.path);
 
     res.json({
       success: true,
@@ -248,7 +254,8 @@ app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) 
     });
 
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: "Erreur serveur upload" });
   }
 });
 
