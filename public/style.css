@@ -1549,4 +1549,13 @@ body {
 .agent-name,
 .agent-phone {
   font-weight: 700;
+}.agent-role {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #00c896, #00a86b);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 5px;
 }
