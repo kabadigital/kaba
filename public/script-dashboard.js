@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
   formData.append("photo", selectedFile);
 
   try {
+
     const res = await fetch(`${API}/agents/upload-photo`, {
       method: "POST",
       headers: {
@@ -72,6 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const data = await res.json();
+
+    console.log("UPLOAD RESPONSE:", data);
 
     if (res.ok) {
 
@@ -89,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   } catch (err) {
-    console.error(err);
+    console.error("UPLOAD ERROR:", err);
     alert("Erreur serveur");
   }
 
