@@ -3,18 +3,26 @@ let selectedFile = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  /* ================= USER SAFE ================= */
+  let user = null;
 
-if (user) {
-  document.getElementById("agent-name").innerText = user.name;
-  document.getElementById("agent-role").innerText = user.role || "Agent";
+  try {
+    user = JSON.parse(localStorage.getItem("user"));
+  } catch (e) {
+    user = null;
+  }
 
-  document.getElementById("profile-photo").src =
-    user.photo
-      ? "https://kaba-dev.onrender.com" + user.photo
-      : "https://kaba-dev.onrender.com/default-avatar.png";
-}
+  if (user) {
+    document.getElementById("agent-name").innerText = user.name;
+    document.getElementById("agent-role").innerText = user.role || "Agent";
 
+    document.getElementById("profile-photo").src =
+      user.photo
+        ? "https://kaba-dev.onrender.com" + user.photo
+        : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
+  }
+
+  /* ================= AUTH ================= */
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -22,71 +30,67 @@ if (user) {
     return;
   }
 
+  /* ================= PREVIEW PHOTO ================= */
   const profileInput = document.getElementById("profileInput");
-const preview = document.getElementById("profile-preview");
+  const preview = document.getElementById("profile-preview");
 
-if (profileInput && preview) {
+  if (profileInput && preview) {
+    profileInput.addEventListener("change", (e) => {
+      selectedFile = e.target.files[0];
 
-  profileInput.addEventListener("change", (e) => {
-    selectedFile = e.target.files[0];
+      if (selectedFile) {
+        preview.src = URL.createObjectURL(selectedFile);
+      }
+    });
+  }
 
-    if (selectedFile) {
-      preview.src = URL.createObjectURL(selectedFile);
+  /* ================= SAVE PROFILE ================= */
+  document.getElementById("save-profile-btn")?.addEventListener("click", async () => {
+
+    if (!selectedFile) {
+      alert("Choisis une image !");
+      return;
     }
+
+    const formData = new FormData();
+    formData.append("photo", selectedFile);
+
+    try {
+      const res = await fetch(`${API}/agents/upload-photo`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+
+        alert("Photo mise à jour !");
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        user.photo = data.photo;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        document.getElementById("profile-photo").src =
+          "https://kaba-dev.onrender.com" + data.photo;
+
+      } else {
+        alert(data.message || "Erreur upload");
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur");
+    }
+
   });
 
-}
-
-document.getElementById("save-profile-btn")?.addEventListener("click", async () => {
-
-  if (!selectedFile) {
-    alert("Choisis une image !");
-    return;
-  }
-
-  const token = localStorage.getItem("token");
-
-  const formData = new FormData();
-  formData.append("photo", selectedFile);
-
-  try {
-
-    const res = await fetch(`${API}/agents/upload-photo`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
-      body: formData
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-
-      alert("Photo mise à jour !");
-
-      // update localStorage
-      const user = JSON.parse(localStorage.getItem("user"));
-      user.photo = data.photo;
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // update UI
-      document.getElementById("profile-photo").src =
-        "https://kaba-dev.onrender.com" + data.photo;
-
-    } else {
-      alert(data.message || "Erreur upload");
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert("Erreur serveur");
-  }
-
-});
+  /* ================= BIENS ================= */
   chargerMesBiens();
 
-  // Masquer chambres si Terrain
   document.getElementById("propertyType")
     .addEventListener("change", function () {
       const rooms = document.getElementById("rooms-section");
@@ -94,7 +98,6 @@ document.getElementById("save-profile-btn")?.addEventListener("click", async () 
         this.value === "Terrain" ? "none" : "block";
     });
 
-  // Submit form
   document.getElementById("add-property-form")
     .addEventListener("submit", ajouterBien);
 
