@@ -270,8 +270,6 @@ uniqueMedias.forEach(media => {
   </div>
 
   <img src="${agentPhoto}" class="agent-avatar">
-
-</div>
 </div>
 
         <div class="contact-actions">
