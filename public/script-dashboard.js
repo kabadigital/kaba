@@ -1,4 +1,5 @@
 const API = "https://api.kaba.digital";
+let selectedFile = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -21,6 +22,68 @@ if (user) {
     return;
   }
 
+  const profileInput = document.getElementById("profileInput");
+const preview = document.getElementById("profile-preview");
+
+if (profileInput && preview) {
+
+  profileInput.addEventListener("change", (e) => {
+    selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      preview.src = URL.createObjectURL(selectedFile);
+    }
+  });
+
+}
+
+document.getElementById("save-profile-btn")?.addEventListener("click", async () => {
+
+  if (!selectedFile) {
+    alert("Choisis une image !");
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+
+  const formData = new FormData();
+  formData.append("photo", selectedFile);
+
+  try {
+
+    const res = await fetch(`${API}/agents/upload-photo`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+
+      alert("Photo mise à jour !");
+
+      // update localStorage
+      const user = JSON.parse(localStorage.getItem("user"));
+      user.photo = data.photo;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // update UI
+      document.getElementById("profile-photo").src =
+        "https://kaba-dev.onrender.com" + data.photo;
+
+    } else {
+      alert(data.message || "Erreur upload");
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Erreur serveur");
+  }
+
+});
   chargerMesBiens();
 
   // Masquer chambres si Terrain

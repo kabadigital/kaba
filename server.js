@@ -224,6 +224,34 @@ app.get("/agents", auth, async (req, res) => {
 
 });
 
+/* ================= PROFILE PHOTO UPDATE ================= */
+app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) => {
+  try {
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Aucune image envoyée" });
+    }
+
+    const agent = await Agent.findById(req.agentId);
+
+    if (!agent) {
+      return res.status(404).json({ message: "Agent introuvable" });
+    }
+
+    agent.photo = "/uploads/" + req.file.filename;
+
+    await agent.save();
+
+    res.json({
+      success: true,
+      photo: agent.photo
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 /* ============================= ROUTE CREER BIEN ============================= */
 app.post(
   "/properties",
