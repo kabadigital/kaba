@@ -266,7 +266,7 @@ app.get("/public/properties", async (req, res) => {
     const skip = (page - 1) * limit;
 
     const biens = await Property.find()
-      .populate("agentId", "name phone whatsapp")
+      .populate("agentId", "name phone whatsapp photo role isCertified")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);

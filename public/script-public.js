@@ -223,6 +223,7 @@ uniqueMedias.forEach(media => {
     `;
 
     const agentName = b.agentId?.name || "Agent";
+    const agentRole = b.agentId?.role || "courtier";
     const agentPhone = b.agentId?.phone || "";
     const agentWhatsapp = b.agentId?.whatsapp || "";
 
@@ -265,16 +266,22 @@ uniqueMedias.forEach(media => {
         <div class="agent-box">
 
   <div class="agent-text">
-  <span class="agent-name">👤 Mahamadou Sall</span><br>
-  <span class="agent-phone">📞 777871989</span>
-</div>
+    <span class="agent-name">👤 ${agentName}</span><br>
+
+    <span class="agent-role">
+      ${
+        b.agentId?.role === "agent"
+          ? "✔️ Agent certifié"
+          : "🏢 Courtier"
+      }
+    </span><br>
+
+    <span class="agent-phone">📞 ${agentPhone}</span>
+  </div>
 
   <img src="${agentPhoto}" class="agent-avatar">
-</div>
 
-        <div class="contact-actions">
-          ${whatsappBtn}
-        </div>
+</div>
 
       </div>
     `;
