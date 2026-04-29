@@ -47,46 +47,53 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ================= SAVE PROFILE ================= */
   document.getElementById("save-profile-btn")?.addEventListener("click", async () => {
 
-    if (!selectedFile) {
-      alert("Choisis une image !");
-      return;
+  if (!selectedFile) {
+    alert("Choisis une image !");
+    return;
+  }
+
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Non connecté");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("photo", selectedFile);
+
+  try {
+    const res = await fetch(`${API}/agents/upload-photo`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+
+      alert("Photo mise à jour !");
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      user.photo = data.photo;
+      localStorage.setItem("user", JSON.stringify(user));
+
+      document.getElementById("profile-photo").src =
+        "https://kaba-dev.onrender.com" + data.photo;
+
+    } else {
+      alert(data.message || "Erreur upload");
     }
 
-    const formData = new FormData();
-    formData.append("photo", selectedFile);
+  } catch (err) {
+    console.error(err);
+    alert("Erreur serveur");
+  }
 
-    try {
-      const res = await fetch(`${API}/agents/upload-photo`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
-        body: formData
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-
-        alert("Photo mise à jour !");
-
-        const user = JSON.parse(localStorage.getItem("user"));
-        user.photo = data.photo;
-        localStorage.setItem("user", JSON.stringify(user));
-
-        document.getElementById("profile-photo").src =
-          "https://kaba-dev.onrender.com" + data.photo;
-
-      } else {
-        alert(data.message || "Erreur upload");
-      }
-
-    } catch (err) {
-      console.error(err);
-      alert("Erreur serveur");
-    }
-
-  });
+});
 
   /* ================= BIENS ================= */
   chargerMesBiens();
