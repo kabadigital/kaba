@@ -47,15 +47,15 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ================= SAVE PROFILE ================= */
   document.getElementById("save-profile-btn")?.addEventListener("click", async () => {
 
-  if (!selectedFile) {
-    alert("Choisis une image !");
-    return;
-  }
-
   const token = localStorage.getItem("token");
 
   if (!token) {
     alert("Non connecté");
+    return;
+  }
+
+  if (!selectedFile) {
+    alert("Choisis une image !");
     return;
   }
 
@@ -65,12 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
 
     const res = await fetch(`${API}/agents/upload-photo`, {
-  method: "POST",
-  headers: {
-    "Authorization": `Bearer ${token}`
-  },
-  body: formData
-});
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData
+    });
 
     const data = await res.json();
 
@@ -80,12 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Photo mise à jour !");
 
-      const user = JSON.parse(localStorage.getItem("user"));
+      // update localStorage
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
       user.photo = data.photo;
       localStorage.setItem("user", JSON.stringify(user));
 
-      document.getElementById("profile-photo").src =
-        "https://kaba-dev.onrender.com" + data.photo;
+      // update UI
+      document.getElementById("profile-photo").src = data.photo;
+      document.getElementById("profile-preview").src = data.photo;
 
     } else {
       alert(data.message || "Erreur upload");
