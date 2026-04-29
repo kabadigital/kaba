@@ -65,12 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
 
     const res = await fetch(`${API}/agents/upload-photo`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
-      body: formData
-    });
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${token}`
+  },
+  body: formData
+});
 
     const data = await res.json();
 
