@@ -265,9 +265,9 @@ uniqueMedias.forEach(media => {
         <div class="agent-box">
 
   <div class="agent-text">
-    <span>👤 ${agentName}</span><br>
-    <span>📞 ${agentPhone}</span>
-  </div>
+  <span class="agent-name">👤 Mahamadou Sall</span><br>
+  <span class="agent-phone">📞 777871989</span>
+</div>
 
   <img src="${agentPhoto}" class="agent-avatar">
 </div>

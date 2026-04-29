@@ -1546,3 +1546,7 @@ body {
   object-fit:cover;
   border:2px solid gold;
 }
+.agent-name,
+.agent-phone {
+  font-weight: 700;
+}
