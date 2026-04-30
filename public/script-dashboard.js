@@ -1,6 +1,33 @@
 const API = "https://api.kaba.digital";
 let selectedFile = null;
 
+/* ================= SAFE FETCH ================= */
+async function safeFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    const text = await res.text();
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error("Réponse non JSON:", text);
+      throw new Error("Erreur serveur (réponse invalide)");
+    }
+
+    if (!res.ok) {
+      throw new Error(data.message || "Erreur API");
+    }
+
+    return data;
+
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+    return null;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ================= USER SAFE ================= */
@@ -37,7 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (profileInput && preview) {
     profileInput.addEventListener("change", (e) => {
       selectedFile = e.target.files[0];
-
       if (selectedFile) {
         preview.src = URL.createObjectURL(selectedFile);
       }
@@ -47,60 +73,37 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ================= SAVE PROFILE ================= */
   document.getElementById("save-profile-btn")?.addEventListener("click", async () => {
 
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (!token) {
-    alert("Non connecté");
-    return;
-  }
+    if (!selectedFile) {
+      alert("Choisis une image !");
+      return;
+    }
 
-  if (!selectedFile) {
-    alert("Choisis une image !");
-    return;
-  }
+    const formData = new FormData();
+    formData.append("photo", selectedFile);
 
-  const formData = new FormData();
-  formData.append("photo", selectedFile);
-
-  try {
-
-    const res = await fetch(`${API}/agents/upload-photo`, {
+    const data = await safeFetch(`${API}/agents/upload-photo`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: "Bearer " + token
       },
       body: formData
     });
 
-    const data = await res.json();
+    if (!data) return;
 
-    console.log("UPLOAD RESPONSE:", data);
+    alert("Photo mise à jour !");
 
-    if (res.ok) {
+    const url = "https://kaba-dev.onrender.com" + data.photo;
 
-      alert("Photo mise à jour !");
+    document.getElementById("profile-photo").src = url;
+    document.getElementById("profile-preview").src = url;
 
-      // update localStorage
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      user.photo = data.photo;
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // update UI
-      const url = "https://kaba-dev.onrender.com" + data.photo;
-
-document.getElementById("profile-photo").src = url;
-document.getElementById("profile-preview").src = url;
-
-    } else {
-      alert(data.message || "Erreur upload");
-    }
-
-  } catch (err) {
-    console.error("UPLOAD ERROR:", err);
-    alert("Erreur serveur");
-  }
-
-});
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    user.photo = data.photo;
+    localStorage.setItem("user", JSON.stringify(user));
+  });
 
   /* ================= BIENS ================= */
   chargerMesBiens();
@@ -108,15 +111,12 @@ document.getElementById("profile-preview").src = url;
   document.getElementById("propertyType")
     .addEventListener("change", function () {
       const rooms = document.getElementById("rooms-section");
-      rooms.style.display =
-        this.value === "Terrain" ? "none" : "block";
+      rooms.style.display = this.value === "Terrain" ? "none" : "block";
     });
 
   document.getElementById("add-property-form")
     .addEventListener("submit", ajouterBien);
-
 });
-
 
 /* ================= AJOUTER BIEN ================= */
 async function ajouterBien(e) {
@@ -125,33 +125,22 @@ async function ajouterBien(e) {
   const token = localStorage.getItem("token");
   const formData = new FormData(e.target);
 
-  try {
-    const res = await fetch(`${API}/properties`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
-      body: formData
-    });
+  const data = await safeFetch(`${API}/properties`, {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token
+    },
+    body: formData
+  });
 
-    const data = await res.json();
+  if (!data) return;
 
-    if (res.ok) {
-      alert("✅ Bien publié avec succès !");
-      e.target.reset();
-      chargerMesBiens();
-    } else {
-      alert(data.message || "Erreur publication");
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert("Erreur serveur");
-  }
+  alert("✅ Bien publié !");
+  e.target.reset();
+  chargerMesBiens();
 }
 
-
-/* ================= CHARGER MES BIENS ================= */
+/* ================= CHARGER BIENS ================= */
 async function chargerMesBiens() {
 
   const container = document.getElementById("my-properties");
@@ -164,112 +153,79 @@ async function chargerMesBiens() {
     return;
   }
 
-  try {
-
-    const res = await fetch(`${API}/properties`, {
-      headers: {
-        Authorization: "Bearer " + token
-      }
-    });
-
-    const data = await res.json();
-
-    console.log("DATA:", data);
-
-    if (!res.ok) {
-      container.innerHTML = `<p>${data.message || "Erreur API"}</p>`;
-      return;
+  const data = await safeFetch(`${API}/properties`, {
+    headers: {
+      Authorization: "Bearer " + token
     }
+  });
 
-    const biens = data;
-
-    container.innerHTML = "";
-
-    if (!biens || biens.length === 0) {
-      container.innerHTML = "<p>Aucun bien publié.</p>";
-      return;
-    }
-
-    biens.forEach(b => {
-
-      const div = document.createElement("div");
-      div.className = "property-card";
-
-      let media = "";
-
-      if (b.videos && b.videos.length > 0) {
-        media = `
-          <video class="property-video" muted loop autoplay playsinline>
-            <source src="${API}${b.videos[0]}" type="video/mp4">
-          </video>
-        `;
-      } else if (b.images && b.images.length > 0) {
-        media = `<img src="${API}${b.images[0]}" class="property-img">`;
-      } else {
-        media = `<div class="no-media">Aucun média</div>`;
-      }
-
-      div.innerHTML = `
-        <div class="media-container">${media}</div>
-
-        <div class="property-info">
-          <div class="badge-type">${b.propertyType || ""}</div>
-
-          <h3>${b.title || ""}</h3>
-
-          <p>📍 ${b.city || ""} - ${b.neighborhood || ""}</p>
-
-          <p class="price">
-            ${Number(b.price || 0).toLocaleString()} FCFA
-          </p>
-
-          <button class="delete-btn" onclick="supprimerBien('${b._id}')">
-            🗑 Supprimer
-          </button>
-        </div>
-      `;
-
-      container.appendChild(div);
-    });
-
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = "<p>Erreur chargement des biens</p>";
+  if (!data) {
+    container.innerHTML = "<p>Erreur chargement</p>";
+    return;
   }
+
+  const biens = data;
+
+  container.innerHTML = "";
+
+  if (!biens.length) {
+    container.innerHTML = "<p>Aucun bien</p>";
+    return;
+  }
+
+  biens.forEach(b => {
+
+    const div = document.createElement("div");
+    div.className = "property-card";
+
+    let media = "";
+
+    if (b.videos?.length) {
+      media = `<video class="property-video" autoplay muted loop playsinline>
+        <source src="${API}${b.videos[0]}" type="video/mp4">
+      </video>`;
+    } else if (b.images?.length) {
+      media = `<img src="${API}${b.images[0]}" class="property-img">`;
+    } else {
+      media = `<div class="no-media">Aucun média</div>`;
+    }
+
+    div.innerHTML = `
+      <div class="media-container">${media}</div>
+      <div class="property-info">
+        <h3>${b.title || ""}</h3>
+        <p>${b.city || ""} - ${b.neighborhood || ""}</p>
+        <p>${Number(b.price || 0).toLocaleString()} FCFA</p>
+
+        <button onclick="supprimerBien('${b._id}')">🗑 Supprimer</button>
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
 }
 
-
-/* ================= SUPPRIMER BIEN ================= */
+/* ================= SUPPRIMER ================= */
 async function supprimerBien(id) {
 
-  if (!confirm("Supprimer ce bien ?")) return;
+  if (!confirm("Supprimer ?")) return;
 
   const token = localStorage.getItem("token");
 
-  try {
-    const res = await fetch(`${API}/properties/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
-
-    if (res.ok) {
-      chargerMesBiens();
-    } else {
-      alert("Erreur suppression");
+  const data = await safeFetch(`${API}/properties/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: "Bearer " + token
     }
+  });
 
-  } catch (err) {
-    console.error(err);
-    alert("Erreur serveur");
-  }
+  if (data) chargerMesBiens();
 }
-
 
 /* ================= LOGOUT ================= */
 document.getElementById("logout-btn")
   ?.addEventListener("click", () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     window.location.href = "login.html";
   });
