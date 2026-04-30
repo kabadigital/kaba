@@ -1,9 +1,14 @@
-const API = "https://api.kaba.digital";
+const API =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : window.location.hostname.includes("onrender")
+    ? "https://kaba-dev.onrender.com"
+    : "https://api.kaba.digital";
 let selectedFile = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ================= USER ================= */
+  /* ================= USER SAFE ================= */
   let user = null;
 
   try {
@@ -12,17 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
     user = null;
   }
 
-  const defaultAvatar = "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
-
   if (user) {
-    document.getElementById("agent-name").innerText = user.name || "";
+    document.getElementById("agent-name").innerText = user.name;
     document.getElementById("agent-role").innerText = user.role || "Agent";
 
     document.getElementById("profile-photo").src =
-      user.photo ? "https://kaba-dev.onrender.com" + user.photo : defaultAvatar;
+      user.photo
+        ? "https://kaba-dev.onrender.com" + user.photo
+        : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
   }
 
-  /* ================= TOKEN ================= */
+  /* ================= AUTH ================= */
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -34,78 +39,91 @@ document.addEventListener("DOMContentLoaded", () => {
   const profileInput = document.getElementById("profileInput");
   const preview = document.getElementById("profile-preview");
 
-  profileInput?.addEventListener("change", (e) => {
-    selectedFile = e.target.files[0];
-    if (selectedFile) {
-      preview.src = URL.createObjectURL(selectedFile);
-    }
-  });
+  if (profileInput && preview) {
+    profileInput.addEventListener("change", (e) => {
+      selectedFile = e.target.files[0];
 
-  /* ================= SAVE PHOTO ================= */
+      if (selectedFile) {
+        preview.src = URL.createObjectURL(selectedFile);
+      }
+    });
+  }
+
+  /* ================= SAVE PROFILE ================= */
   document.getElementById("save-profile-btn")?.addEventListener("click", async () => {
 
-    if (!selectedFile) {
-      return alert("Choisis une image !");
-    }
+  const token = localStorage.getItem("token");
 
-    const formData = new FormData();
-    formData.append("photo", selectedFile);
+  if (!token) {
+    alert("Non connecté");
+    return;
+  }
 
-    try {
-      const res = await fetch(`${API}/agents/upload-photo`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        body: formData
-      });
+  if (!selectedFile) {
+    alert("Choisis une image !");
+    return;
+  }
 
-      const text = await res.text();
+  const formData = new FormData();
+  formData.append("photo", selectedFile);
 
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        console.error("Réponse non JSON:", text);
-        return alert("Erreur serveur (API incorrecte)");
-      }
+  try {
 
-      if (!res.ok) {
-        return alert(data.message || "Erreur upload");
-      }
+    const res = await fetch(`${API}/agents/upload-photo`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData
+    });
 
-      const url = "https://kaba-dev.onrender.com" + data.photo;
+    const data = await res.json();
 
-      document.getElementById("profile-photo").src = url;
-      document.getElementById("profile-preview").src = url;
+    console.log("UPLOAD RESPONSE:", data);
 
+    if (res.ok) {
+
+      alert("Photo mise à jour !");
+
+      // update localStorage
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       user.photo = data.photo;
       localStorage.setItem("user", JSON.stringify(user));
 
-      alert("Photo mise à jour !");
+      // update UI
+      const url = data.photo;
 
-    } catch (err) {
-      console.error("UPLOAD ERROR:", err);
-      alert("Erreur réseau serveur");
+document.getElementById("profile-photo").src = url;
+document.getElementById("profile-preview").src = url;
+
+    } else {
+      alert(data.message || "Erreur upload");
     }
 
-  });
+  } catch (err) {
+    console.error("UPLOAD ERROR:", err);
+    alert("Erreur serveur");
+  }
+
+});
 
   /* ================= BIENS ================= */
   chargerMesBiens();
 
-  document.getElementById("propertyType")?.addEventListener("change", function () {
-    const rooms = document.getElementById("rooms-section");
-    if (rooms) rooms.style.display = this.value === "Terrain" ? "none" : "block";
-  });
+  document.getElementById("propertyType")
+    .addEventListener("change", function () {
+      const rooms = document.getElementById("rooms-section");
+      rooms.style.display =
+        this.value === "Terrain" ? "none" : "block";
+    });
 
-  document.getElementById("add-property-form")?.addEventListener("submit", ajouterBien);
+  document.getElementById("add-property-form")
+    .addEventListener("submit", ajouterBien);
 
 });
 
 
-/* ================= AJOUT BIEN ================= */
+/* ================= AJOUTER BIEN ================= */
 async function ajouterBien(e) {
   e.preventDefault();
 
@@ -115,19 +133,21 @@ async function ajouterBien(e) {
   try {
     const res = await fetch(`${API}/properties`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
       body: formData
     });
 
     const data = await res.json();
 
-    if (!res.ok) {
-      return alert(data.message || "Erreur publication");
+    if (res.ok) {
+      alert("✅ Bien publié avec succès !");
+      e.target.reset();
+      chargerMesBiens();
+    } else {
+      alert(data.message || "Erreur publication");
     }
-
-    alert("Bien publié !");
-    e.target.reset();
-    chargerMesBiens();
 
   } catch (err) {
     console.error(err);
@@ -136,62 +156,82 @@ async function ajouterBien(e) {
 }
 
 
-/* ================= CHARGER BIENS ================= */
+/* ================= CHARGER MES BIENS ================= */
 async function chargerMesBiens() {
 
   const container = document.getElementById("my-properties");
-  container.innerHTML = "Chargement...";
+  container.innerHTML = "<p>Chargement...</p>";
 
   const token = localStorage.getItem("token");
 
   if (!token) {
-    container.innerHTML = "Non connecté";
+    container.innerHTML = "<p>Non connecté</p>";
     return;
   }
 
   try {
+
     const res = await fetch(`${API}/properties`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: {
+        Authorization: "Bearer " + token
+      }
     });
 
     const data = await res.json();
 
+    console.log("DATA:", data);
+
     if (!res.ok) {
-      container.innerHTML = data.message || "Erreur API";
+      container.innerHTML = `<p>${data.message || "Erreur API"}</p>`;
       return;
     }
 
-    if (!data || data.length === 0) {
-      container.innerHTML = "Aucun bien";
-      return;
-    }
+    const biens = data;
 
     container.innerHTML = "";
 
-    data.forEach(b => {
+    if (!biens || biens.length === 0) {
+      container.innerHTML = "<p>Aucun bien publié.</p>";
+      return;
+    }
+
+    biens.forEach(b => {
 
       const div = document.createElement("div");
       div.className = "property-card";
 
       let media = "";
 
-      if (b.videos?.length) {
-        media = `<video autoplay muted loop playsinline>
-          <source src="${API}${b.videos[0]}" type="video/mp4">
-        </video>`;
-      } else if (b.images?.length) {
-        media = `<img src="${API}${b.images[0]}">`;
+      if (b.videos && b.videos.length > 0) {
+        media = `
+          <video class="property-video" muted loop autoplay playsinline>
+            <source src="${API}${b.videos[0]}" type="video/mp4">
+          </video>
+        `;
+      } else if (b.images && b.images.length > 0) {
+        media = `<img src="${API}${b.images[0]}" class="property-img">`;
       } else {
-        media = `<div>Aucun média</div>`;
+        media = `<div class="no-media">Aucun média</div>`;
       }
 
       div.innerHTML = `
-        <div class="media">${media}</div>
-        <h3>${b.title || ""}</h3>
-        <p>${b.city || ""} - ${b.neighborhood || ""}</p>
-        <p>${Number(b.price || 0).toLocaleString()} FCFA</p>
+        <div class="media-container">${media}</div>
 
-        <button onclick="supprimerBien('${b._id}')">Supprimer</button>
+        <div class="property-info">
+          <div class="badge-type">${b.propertyType || ""}</div>
+
+          <h3>${b.title || ""}</h3>
+
+          <p>📍 ${b.city || ""} - ${b.neighborhood || ""}</p>
+
+          <p class="price">
+            ${Number(b.price || 0).toLocaleString()} FCFA
+          </p>
+
+          <button class="delete-btn" onclick="supprimerBien('${b._id}')">
+            🗑 Supprimer
+          </button>
+        </div>
       `;
 
       container.appendChild(div);
@@ -199,12 +239,12 @@ async function chargerMesBiens() {
 
   } catch (err) {
     console.error(err);
-    container.innerHTML = "Erreur chargement";
+    container.innerHTML = "<p>Erreur chargement des biens</p>";
   }
 }
 
 
-/* ================= SUPPRIMER ================= */
+/* ================= SUPPRIMER BIEN ================= */
 async function supprimerBien(id) {
 
   if (!confirm("Supprimer ce bien ?")) return;
@@ -214,7 +254,9 @@ async function supprimerBien(id) {
   try {
     const res = await fetch(`${API}/properties/${id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
     });
 
     if (res.ok) {
@@ -231,8 +273,8 @@ async function supprimerBien(id) {
 
 
 /* ================= LOGOUT ================= */
-document.getElementById("logout-btn")?.addEventListener("click", () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  window.location.href = "login.html";
-});
+document.getElementById("logout-btn")
+  ?.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  });
