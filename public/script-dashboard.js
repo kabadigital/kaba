@@ -236,17 +236,19 @@ try {
       let media = "";
 
       if (b.videos && b.videos.length > 0) {
-        media = `
-          <video class="property-video" muted loop autoplay playsinline>
-            <source src="${API}${b.videos[0]}" type="video/mp4">
-          </video>
-        `;
+
+  const video = b.videos[0];
+  const videoUrl = video.startsWith("http") ? video : API + video;
+
+  media = `<video class="property-video" muted loop autoplay playsinline>
+    <source src="${videoUrl}" type="video/mp4">
+  </video>`;
+
       } else if (b.images && b.images.length > 0) {
         const img = b.images[0];
 
-media = `<img src="${
-  img.startsWith("http") ? img : API + img
-}" class="property-img">`;
+const img = b.images[0];
+media = `<img src="${img.startsWith("http") ? img : API + img}" class="property-img">`;
       } else {
         media = `<div class="no-media">Aucun média</div>`;
       }
