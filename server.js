@@ -39,16 +39,15 @@ app.use(express.static(path.join(__dirname, "public")));
 
 /* ============================= CONNEXION MONGODB ============================= */
 
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
 mongoose.connect(process.env.MONGO_URI, {
   serverSelectionTimeoutMS: 10000
 })
 .then(() => {
   console.log("✅ MongoDB connecté");
-
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
-
 })
 .catch(err => {
   console.error("❌ MongoDB error :", err);
