@@ -246,6 +246,11 @@ try {
     }
 
     biens.forEach(b => {
+      const agentPhoto = b.agentId?.photo && b.agentId.photo.startsWith("http")
+  ? b.agentId.photo
+  : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
+
+const agentName = b.agentId?.name || "Agent";
 
       const div = document.createElement("div");
       div.className = "property-card";
@@ -269,24 +274,30 @@ media = `<img src="${img.startsWith("http") ? img : API + img}" class="property-
       }
 
       div.innerHTML = `
-        <div class="media-container">${media}</div>
+  <div class="media-container">${media}</div>
 
-        <div class="property-info">
-          <div class="badge-type">${b.propertyType || ""}</div>
+  <div class="property-info">
+    <div class="badge-type">${b.propertyType || ""}</div>
 
-          <h3>${b.title || ""}</h3>
+    <h3>${b.title || ""}</h3>
 
-          <p>📍 ${b.city || ""} - ${b.neighborhood || ""}</p>
+    <p>📍 ${b.city || ""} - ${b.neighborhood || ""}</p>
 
-          <p class="price">
-            ${Number(b.price || 0).toLocaleString()} FCFA
-          </p>
+    <p class="price">
+      ${Number(b.price || 0).toLocaleString()} FCFA
+    </p>
 
-          <button class="delete-btn" onclick="supprimerBien('${b._id}')">
-            🗑 Supprimer
-          </button>
-        </div>
-      `;
+    <!-- 👇 AJOUT AGENT -->
+    <div class="agent-box">
+      <img src="${agentPhoto}" class="agent-avatar">
+      <span>${agentName}</span>
+    </div>
+
+    <button class="delete-btn" onclick="supprimerBien('${b._id}')">
+      🗑 Supprimer
+    </button>
+  </div>
+`;
 
       container.appendChild(div);
     });
