@@ -66,32 +66,45 @@ const upload = multer({ storage });
 
 /* ============================= UPLOAD CLOUDINARY ============================= */
 
-app.post("/upload", upload.single("file"), async (req, res) => {
+app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) => {
   try {
+
     if (!req.file) {
-      return res.status(400).json({ message: "Aucun fichier envoyé" });
+      console.log("❌ PAS DE FICHIER");
+      return res.status(400).json({ message: "Aucune image envoyée" });
     }
+
+    console.log("📤 Upload vers Cloudinary...");
 
     const result = await cloudinary.uploader.upload(req.file.path, {
-  folder: "kaba",
-  resource_type: "auto" // 🔥 IMPORTANT pour les vidéos
-});
+      folder: "agents"
+    });
 
-    // suppression du fichier local après upload
-    if (req.file.path) {
-      fs.unlinkSync(req.file.path);
+    console.log("✅ Cloudinary OK:", result.secure_url);
+
+    const agent = await Agent.findById(req.agentId);
+
+    if (!agent) {
+      console.log("❌ USER INTROUVABLE");
+      return res.status(404).json({ message: "Utilisateur introuvable" });
     }
 
-    res.json({
-      url: result.secure_url,
-      type: result.resource_type
+    agent.photo = result.secure_url;
+    await agent.save();
+
+    fs.unlinkSync(req.file.path);
+
+    return res.json({
+      success: true,
+      photo: result.secure_url
     });
 
   } catch (err) {
-    console.error("Upload error:", err);
 
-    res.status(500).json({
-      message: "Erreur upload Cloudinary",
+    console.error("🔥 ERREUR UPLOAD PHOTO:", err);
+
+    return res.status(500).json({
+      message: "Erreur upload",
       error: err.message
     });
   }
