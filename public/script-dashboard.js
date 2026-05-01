@@ -26,9 +26,17 @@ if (user) {
     user.photo && user.photo.startsWith("http")
       ? user.photo
       : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
+
 } else {
+
   console.log("❌ Aucun user valide dans localStorage");
-  }
+
+  document.getElementById("agent-name").innerText = "Utilisateur";
+  document.getElementById("agent-role").innerText = "Agent";
+
+  document.getElementById("profile-photo").src =
+    "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
+}
 
   /* ================= AUTH ================= */
   const token = localStorage.getItem("token");
@@ -96,12 +104,28 @@ if (res.ok) {
 
   alert("Photo mise à jour !");
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  user.photo = data.photo;
-  localStorage.setItem("user", JSON.stringify(user));
+const stored = localStorage.getItem("user");
+
+let user = {};
+
+if (stored && stored !== "undefined") {
+  try {
+    user = JSON.parse(stored);
+  } catch (e) {
+    user = {};
+  }
+}
+
+user.photo = data.photo;
+
+localStorage.setItem("user", JSON.stringify(user));
 
   document.getElementById("profile-photo").src = data.photo;
   document.getElementById("profile-preview").src = data.photo;
+
+  document.querySelectorAll(".profile-avatar").forEach(img => {
+  img.src = data.photo;
+});
 
 } else {
   alert(data.message || "Erreur upload");
