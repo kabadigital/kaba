@@ -22,9 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("agent-role").innerText = user.role || "Agent";
 
     document.getElementById("profile-photo").src =
-      user.photo
-        ? "https://kaba-dev.onrender.com" + user.photo
-        : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
+  user.photo
+    ? user.photo
+    : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
   }
 
   /* ================= AUTH ================= */
@@ -70,35 +70,39 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
 
     const res = await fetch(`${API}/agents/upload-photo`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      body: formData
-    });
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`
+  },
+  body: formData
+});
 
-    const data = await res.json();
+let data;
 
-    console.log("UPLOAD RESPONSE:", data);
+try {
+  data = await res.json();
+} catch {
+  console.error("❌ Réponse non JSON");
+  alert("Erreur serveur");
+  return;
+}
 
-    if (res.ok) {
+console.log("UPLOAD RESPONSE:", data);
 
-      alert("Photo mise à jour !");
+if (res.ok) {
 
-      // update localStorage
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      user.photo = data.photo;
-      localStorage.setItem("user", JSON.stringify(user));
+  alert("Photo mise à jour !");
 
-      // update UI
-      const url = data.photo;
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  user.photo = data.photo;
+  localStorage.setItem("user", JSON.stringify(user));
 
-document.getElementById("profile-photo").src = url;
-document.getElementById("profile-preview").src = url;
+  document.getElementById("profile-photo").src = data.photo;
+  document.getElementById("profile-preview").src = data.photo;
 
-    } else {
-      alert(data.message || "Erreur upload");
-    }
+} else {
+  alert(data.message || "Erreur upload");
+}
 
   } catch (err) {
     console.error("UPLOAD ERROR:", err);
@@ -139,7 +143,15 @@ async function ajouterBien(e) {
       body: formData
     });
 
-    const data = await res.json();
+    let data;
+
+try {
+  data = await res.json();
+} catch {
+  console.error("Réponse invalide");
+  alert("Erreur serveur");
+  return;
+}
 
     if (res.ok) {
       alert("✅ Bien publié avec succès !");
@@ -177,7 +189,15 @@ async function chargerMesBiens() {
       }
     });
 
-    const data = await res.json();
+    let data;
+
+try {
+  data = await res.json();
+} catch {
+  console.error("Réponse invalide");
+  alert("Erreur serveur");
+  return;
+}
 
     console.log("DATA:", data);
 
