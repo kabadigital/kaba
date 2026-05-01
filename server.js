@@ -239,10 +239,6 @@ app.get("/agents", auth, async (req, res) => {
 /* ================= PROFILE PHOTO UPDATE ================= */
 app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) => {
   try {
-console.log("AUTH HEADER:", req.headers.authorization);
-    console.log("BODY:", req.body);
-console.log("FILE:", req.file);
-console.log("USER:", req.agentId);
 
     if (!req.file) {
       return res.status(400).json({ message: "Aucune image envoyée" });
@@ -520,4 +516,12 @@ app.post("/admin/create", auth, async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 
+});
+
+process.on("uncaughtException", err => {
+  console.error("🔥 Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", err => {
+  console.error("🔥 Unhandled Rejection:", err);
 });
