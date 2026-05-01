@@ -21,6 +21,34 @@ const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 3000;
 
+const app = express();
+
+/* ================= AUTH (DOIT ÊTRE ICI) ================= */
+const auth = (req, res, next) => {
+
+  const header = req.headers["authorization"];
+
+  if (!header) {
+    return res.status(401).json({ message: "Token manquant" });
+  }
+
+  const token = header.startsWith("Bearer ")
+    ? header.split(" ")[1]
+    : header;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.agentId = decoded.id;
+    req.role = decoded.role;
+
+    next();
+
+  } catch {
+    res.status(401).json({ message: "Token invalide" });
+  }
+};
+
 /* ============================= ROUTE HEALTH CHECK ============================= */
 app.get("/healthz", (req, res) => {
   res.status(200).send("OK");
@@ -156,34 +184,6 @@ const messageSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 const Message = mongoose.model("Message", messageSchema);
-
-/* ============================= MIDDLEWARE AUTH ============================= */
-const auth = (req, res, next) => {
-
-  const header = req.headers["authorization"];
-
-  if (!header) {
-    return res.status(401).json({ message: "Token manquant" });
-  }
-
-  // 🔥 EXTRACTION DU TOKEN
-  const token = header.startsWith("Bearer ")
-    ? header.split(" ")[1]
-    : header;
-
-  try {
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    req.agentId = decoded.id;
-    req.role = decoded.role;
-
-    next();
-
-  } catch {
-    res.status(401).json({ message: "Token invalide" });
-  }
-};
 
 /* ============================= ROUTE INSCRIPTION ============================= */
 app.post("/agents/register", upload.single("photo"), async (req, res) => {

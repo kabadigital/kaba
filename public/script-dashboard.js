@@ -10,10 +10,9 @@ let user = null;
 try {
   const stored = localStorage.getItem("user");
 
-  if (stored && stored !== "undefined") {
+  if (stored && stored !== "undefined" && stored !== "null") {
     user = JSON.parse(stored);
   }
-
 } catch (e) {
   user = null;
 }
@@ -81,55 +80,55 @@ if (user) {
   try {
 
     const res = await fetch(`${API}/agents/upload-photo`, {
-  method: "POST",
-  headers: {
-    Authorization: `Bearer ${token}`
-  },
-  body: formData
-});
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData
+    });
 
-let data;
+    let data;
 
-try {
-  data = await res.json();
-} catch {
-  console.error("❌ Réponse non JSON");
-  alert("Erreur serveur");
-  return;
-}
+    try {
+      data = await res.json();
+    } catch {
+      console.error("❌ Réponse non JSON");
+      alert("Erreur serveur");
+      return;
+    }
 
-console.log("UPLOAD RESPONSE:", data);
+    console.log("UPLOAD RESPONSE:", data);
 
-if (res.ok) {
+    if (res.ok) {
 
-  alert("Photo mise à jour !");
+      alert("Photo mise à jour !");
 
-const stored = localStorage.getItem("user");
+      const stored = localStorage.getItem("user");
 
-let user = {};
+      let user = {};
 
-if (stored && stored !== "undefined") {
-  try {
-    user = JSON.parse(stored);
-  } catch (e) {
-    user = {};
-  }
-}
+      try {
+        if (stored && stored !== "undefined" && stored !== "null") {
+          user = JSON.parse(stored);
+        }
+      } catch (e) {
+        user = {};
+      }
 
-user.photo = data.photo;
+      user.photo = data.photo;
 
-localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
 
-  document.getElementById("profile-photo").src = data.photo;
-  document.getElementById("profile-preview").src = data.photo;
+      document.getElementById("profile-photo").src = data.photo;
+      document.getElementById("profile-preview").src = data.photo;
 
-  document.querySelectorAll(".profile-avatar").forEach(img => {
-  img.src = data.photo;
-});
+      document.querySelectorAll(".profile-avatar").forEach(img => {
+        img.src = data.photo;
+      });
 
-} else {
-  alert(data.message || "Erreur upload");
-}
+    } else {
+      alert(data.message || "Erreur upload");
+    }
 
   } catch (err) {
     console.error("UPLOAD ERROR:", err);
