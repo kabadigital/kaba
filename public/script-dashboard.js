@@ -9,22 +9,31 @@ let selectedFile = null;
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ================= USER SAFE ================= */
-  let user = null;
+  /* ================= USER SAFE (ROBUSTE) ================= */
+let user = null;
 
-  try {
-    user = JSON.parse(localStorage.getItem("user"));
-  } catch (e) {
-    user = null;
+try {
+  const stored = localStorage.getItem("user");
+
+  if (stored && stored !== "undefined") {
+    user = JSON.parse(stored);
   }
 
-  if (user) {
-    document.getElementById("agent-name").innerText = user.name;
-    document.getElementById("agent-role").innerText = user.role || "Agent";
+} catch (e) {
+  user = null;
+}
 
-    document.getElementById("profile-photo").src =
-  user.photo && user.photo.startsWith("http")
-    ? user.photo
-    : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
+if (user) {
+  document.getElementById("agent-name").innerText = user.name || "Utilisateur";
+  document.getElementById("agent-role").innerText = user.role || "Agent";
+
+  document.getElementById("profile-photo").src =
+    user.photo && user.photo.startsWith("http")
+      ? user.photo
+      : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
+} else {
+  console.log("❌ Aucun user valide dans localStorage");
+}
   }
 
   /* ================= AUTH ================= */
@@ -123,6 +132,10 @@ if (res.ok) {
 
   document.getElementById("add-property-form")
     .addEventListener("submit", ajouterBien);
+
+    if (document.getElementById("notifications")) {
+  addNotification("👋 Dashboard prêt");
+}
 
 });
 
@@ -229,7 +242,11 @@ try {
           </video>
         `;
       } else if (b.images && b.images.length > 0) {
-        media = `<img src="${API}${b.images[0]}" class="property-img">`;
+        const img = b.images[0];
+
+media = `<img src="${
+  img.startsWith("http") ? img : API + img
+}" class="property-img">`;
       } else {
         media = `<div class="no-media">Aucun média</div>`;
       }
@@ -313,5 +330,3 @@ function addNotification(msg) {
   container.prepend(div);
 }
 
-// TEST (optionnel)
-addNotification("👋 Dashboard chargé avec succès");
