@@ -39,20 +39,25 @@ app.use(express.static(path.join(__dirname, "public")));
 
 /* ============================= CONNEXION MONGODB ============================= */
 
-mongoose.connect(process.env.MONGO_URI, {
-  serverSelectionTimeoutMS: 10000
-})
-.then(() => {
-  console.log("✅ MongoDB connecté");
+async function startServer() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 10000
+    });
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
+    console.log("✅ MongoDB connecté");
 
-})
-.catch(err => {
-  console.error("❌ MongoDB error :", err);
-});
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+
+  } catch (err) {
+    console.error("❌ MongoDB error :", err);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 /* ============================= CONFIGURATION MULTER ============================= */
 const storage = multer.diskStorage({
@@ -66,32 +71,39 @@ const upload = multer({ storage });
 
 /* ============================= UPLOAD CLOUDINARY ============================= */
 
-app.post("/upload", upload.single("file"), async (req, res) => {
+app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) => {
   try {
+
     if (!req.file) {
-      return res.status(400).json({ message: "Aucun fichier envoyé" });
+      return res.status(400).json({ message: "Aucune image envoyée" });
     }
 
     const result = await cloudinary.uploader.upload(req.file.path, {
-  folder: "kaba",
-  resource_type: "auto" // 🔥 IMPORTANT pour les vidéos
-});
+      folder: "agents",
+      resource_type: "image"
+    });
 
-    // suppression du fichier local après upload
-    if (req.file.path) {
-      fs.unlinkSync(req.file.path);
+    fs.unlink(req.file.path, () => {}); // SAFE delete
+
+    const agent = await Agent.findById(req.agentId);
+
+    if (!agent) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
     }
 
-    res.json({
-      url: result.secure_url,
-      type: result.resource_type
+    agent.photo = result.secure_url;
+    await agent.save();
+
+    return res.json({
+      success: true,
+      photo: result.secure_url
     });
 
   } catch (err) {
-    console.error("Upload error:", err);
+    console.error("UPLOAD ERROR:", err);
 
-    res.status(500).json({
-      message: "Erreur upload Cloudinary",
+    return res.status(500).json({
+      message: "Erreur upload",
       error: err.message
     });
   }

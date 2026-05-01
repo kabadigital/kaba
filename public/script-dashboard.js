@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("agent-role").innerText = user.role || "Agent";
 
     document.getElementById("profile-photo").src =
-  user.photo
+  user.photo && user.photo.startsWith("http")
     ? user.photo
     : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
   }
