@@ -242,8 +242,36 @@ app.post(
   upload.fields([{ name: "images", maxCount: 10 }, { name: "videos", maxCount: 5 }]),
   async (req, res) => {
     try {
-      const images = req.files["images"] ? req.files["images"].map(f => "/uploads/" + f.filename) : [];
-      const videos = req.files["videos"] ? req.files["videos"].map(f => "/uploads/" + f.filename) : [];
+      // 🔥 UPLOAD IMAGES CLOUDINARY
+const images = req.files["images"]
+  ? await Promise.all(
+      req.files["images"].map(async file => {
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: "properties"
+        });
+
+        fs.unlinkSync(file.path);
+
+        return result.secure_url;
+      })
+    )
+  : [];
+
+// 🔥 UPLOAD VIDEOS CLOUDINARY
+const videos = req.files["videos"]
+  ? await Promise.all(
+      req.files["videos"].map(async file => {
+        const result = await cloudinary.uploader.upload(file.path, {
+          resource_type: "video",
+          folder: "properties"
+        });
+
+        fs.unlinkSync(file.path);
+
+        return result.secure_url;
+      })
+    )
+  : [];
 
       const property = await Property.create({
         title: req.body.title,
