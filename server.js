@@ -235,35 +235,6 @@ app.get("/agents", auth, async (req, res) => {
 
 });
 
-/* ================= PROFILE PHOTO UPDATE ================= */
-app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) => {
-  try {
-
-    if (!req.file) {
-      return res.status(400).json({ message: "Aucune image envoyée" });
-    }
-
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "agents"
-    });
-
-    const agent = await Agent.findById(req.agentId);
-
-    agent.photo = result.secure_url;
-    await agent.save();
-
-    fs.unlinkSync(req.file.path);
-
-    res.json({
-      success: true,
-      photo: agent.photo
-    });
-
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
 /* ============================= ROUTE CREER BIEN ============================= */
 app.post(
   "/properties",
