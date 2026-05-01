@@ -1,9 +1,4 @@
-const API =
-  window.location.hostname === "localhost"
-    ? "http://localhost:3000"
-    : window.location.hostname.includes("onrender")
-    ? "https://kaba-dev.onrender.com"
-    : "https://api.kaba.digital";
+const API = "https://kaba-dev.onrender.com";
 let selectedFile = null;
 
 document.addEventListener("DOMContentLoaded", () => {
