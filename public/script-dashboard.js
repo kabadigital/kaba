@@ -28,7 +28,6 @@ if (user) {
       : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
 } else {
   console.log("❌ Aucun user valide dans localStorage");
-}
   }
 
   /* ================= AUTH ================= */
@@ -241,8 +240,6 @@ try {
 
       } else if (b.images && b.images.length > 0) {
         const img = b.images[0];
-
-const img = b.images[0];
 media = `<img src="${img.startsWith("http") ? img : API + img}" class="property-img">`;
       } else {
         media = `<div class="no-media">Aucun média</div>`;
