@@ -21,8 +21,6 @@ const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 3000;
 
-const app = express();
-
 /* ================= AUTH (DOIT ÊTRE ICI) ================= */
 const auth = (req, res, next) => {
 
@@ -100,6 +98,7 @@ const upload = multer({ storage });
 /* ============================= UPLOAD CLOUDINARY ============================= */
 
 app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) => {
+  console.log("UPLOAD ROUTE HIT");
   try {
 
     if (!req.file) {
