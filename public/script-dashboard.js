@@ -298,3 +298,20 @@ document.getElementById("logout-btn")
     localStorage.removeItem("token");
     window.location.href = "login.html";
   });
+
+  // ================= NOTIFICATIONS (LIVE FRONT SIMPLE) =================
+
+function addNotification(msg) {
+  const container = document.getElementById("notifications");
+
+  if (!container) return;
+
+  const div = document.createElement("div");
+  div.className = "notif";
+  div.innerText = msg;
+
+  container.prepend(div);
+}
+
+// TEST (optionnel)
+addNotification("👋 Dashboard chargé avec succès");

@@ -240,3 +240,107 @@ body{
   border-radius: 8px;
   cursor: pointer;
 }
+.top-status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.status-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.status-right {
+  font-weight: bold;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: #111;
+  color: white;
+}
+
+.dashboard-section .container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* STATS SaaS */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.stat-card h4 {
+  font-size: 24px;
+  margin: 0;
+}
+
+/* PROFILE */
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+/* GRID BIENS */
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .properties-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+#notifications .notif {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}

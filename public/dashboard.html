@@ -18,6 +18,17 @@
   </nav>
 </header>
 
+<div class="top-status-bar">
+  <div class="status-left">
+    <span id="live-dot">🟢 Live</span>
+    <span id="role-badge">Agent</span>
+  </div>
+
+  <div class="status-right">
+    <span id="notif-count">🔔 0</span>
+  </div>
+</div>
+
 <section class="dashboard-section">
 <div class="container">
 
@@ -36,21 +47,28 @@
 
 <div class="dashboard-stats">
 
-  <div class="stat-card">
+  <div class="stat-card glass">
     <h4 id="total-biens">0</h4>
-    <p>Mes biens</p>
+    <p>🏠 Mes biens</p>
   </div>
 
-  <div class="stat-card">
+  <div class="stat-card glass">
     <h4 id="total-views">0</h4>
-    <p>Vues totales</p>
+    <p>👁 Vues totales</p>
   </div>
 
-  <div class="stat-card">
+  <div class="stat-card glass premium">
     <h4 id="total-premium">0</h4>
-    <p>Premium</p>
+    <p>⭐ Premium</p>
   </div>
 
+</div>
+
+</div>
+
+<div class="card">
+  <h3>🔔 Notifications</h3>
+  <div id="notifications"></div>
 </div>
 
 <div class="profile-upload-box">
