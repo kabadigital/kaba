@@ -238,7 +238,7 @@ input{
 
 <script>
 
-   const role = localStorage.getItem("role");
+   localStorage.setItem("role", data.agent.role);
 
 if(role !== "admin"){
   alert("Accès refusé");
@@ -282,9 +282,9 @@ async function chargerDashboard(){
 async function chargerUsers(){
 
   const res = await fetch(`${API}/agents`, {
-    headers:{
-      "Authorization": localStorage.getItem("token")
-    }
+    headers: {
+  Authorization: "Bearer " + localStorage.getItem("token")
+}
   });
 
   const users = await res.json();

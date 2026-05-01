@@ -173,6 +173,13 @@ const auth = (req, res, next) => {
   }
 };
 
+const isAdmin = (req, res, next) => {
+  if (req.role !== "admin") {
+    return res.status(403).json({ message: "Accès refusé admin" });
+  }
+  next();
+};
+
 /* ============================= ROUTE INSCRIPTION ============================= */
 app.post("/agents/register", upload.single("photo"), async (req, res) => {
   try {
@@ -227,6 +234,7 @@ app.get("/agents", auth, async (req, res) => {
 /* ================= PROFILE PHOTO UPDATE ================= */
 app.post("/agents/upload-photo", auth, upload.single("photo"), async (req, res) => {
   try {
+
 console.log("AUTH HEADER:", req.headers.authorization);
     console.log("BODY:", req.body);
 console.log("FILE:", req.file);
