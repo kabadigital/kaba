@@ -19,10 +19,11 @@
       <span style="font-size:22px; font-weight:600;">Kaba</span>
     </div>
 
-    <div style="display:flex; gap:20px;">
-      <a href="login.html">Connexion</a>
-      <a href="register.html">Inscription</a>
-    </div>
+    <div class="auth-area">
+  <a href="login.html" id="loginLink">Connexion</a>
+  <a href="register.html">Inscription</a>
+  <a href="account.html" id="accountLink" style="display:none;">Mon compte</a>
+</div>
 
   </div>
 </header>
@@ -111,6 +112,21 @@
 
 <!-- ================= SCRIPT ================= -->
 <script src="script-public.js"></script>
+
+<script>
+  const isLoggedIn = localStorage.getItem("userLoggedIn");
+
+  const loginLink = document.getElementById("loginLink");
+  const accountLink = document.getElementById("accountLink");
+
+  if (isLoggedIn === "true") {
+    loginLink.style.display = "none";
+    accountLink.style.display = "inline-block";
+  } else {
+    loginLink.style.display = "inline-block";
+    accountLink.style.display = "none";
+  }
+</script>
 
 <footer class="footer-premium">
 
