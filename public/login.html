@@ -94,28 +94,26 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({ email, password })
     });
-    console.log("STATUS:", res.status);
 
     const data = await res.json();
-    
-console.log("DATA:", data);
 
     if(res.ok){
 
-      localStorage.setItem("token", data.token);
+  const role = data?.agent?.role || "user";
 
-      const role = data?.agent?.role || "user";
-      localStorage.setItem("role", role);
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("role", role);
+  localStorage.setItem("userLoggedIn", "true");
 
-      localStorage.setItem("userLoggedIn", "true");
+  console.log("LOGIN OK - STORAGE SET");
 
-      alert("Connexion réussie");
-
-      if(role === "admin"){
-        window.location.href = "admin.html";
-      }else{
-        window.location.href = "dashboard.html";
-      }
+  setTimeout(() => {
+    if(role === "admin"){
+      window.location.href = "admin.html";
+    } else {
+      window.location.href = "dashboard.html";
+    }
+  }, 100);
 
     } else {
       alert(data.message);
