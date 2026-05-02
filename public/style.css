@@ -1681,3 +1681,73 @@ body {
   color: #94a3b8;
   font-style: italic;
 }
+.recent-properties {
+  background: #0f172a;
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Bloc sombre premium */
+.recent-properties-content {
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+  padding: 40px;
+
+  background: #0f172a; /* reste bien sombre */
+  border-radius: 18px;
+
+  position: relative;
+  overflow: hidden;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Bord lumineux subtil (effet luxe) */
+.recent-properties-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  padding: 1px;
+
+  background: linear-gradient(
+    120deg,
+    rgba(251, 191, 36, 0.0),
+    rgba(251, 191, 36, 0.35),
+    rgba(251, 191, 36, 0.0)
+  );
+
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none;
+}
+
+/* Glow très léger externe */
+.recent-properties-content::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  background: radial-gradient(
+    circle at top,
+    rgba(251, 191, 36, 0.08),
+    transparent 70%
+  );
+  z-index: -1;
+}
+
+/* Texte */
+.recent-properties-content h2 {
+  color: #ffffff;
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.recent-properties-content p {
+  color: #cbd5f5;
+  font-size: 15px;
+}
