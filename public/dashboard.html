@@ -206,17 +206,28 @@ card.remove();
 </script>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
 
-document.getElementById("logout-btn").addEventListener("click", function(e) {
-  e.preventDefault();
+  const logoutBtn = document.getElementById("logout-btn");
 
-  localStorage.removeItem("userLoggedIn");
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
+  if (!logoutBtn) {
+    console.log("Bouton logout introuvable");
+    return;
+  }
 
-  window.location.href = "index.html";
+  logoutBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+
+    console.log("LOGOUT CLICKED");
+
+    localStorage.removeItem("userLoggedIn");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+
+    window.location.href = "index.html";
+  });
+
 });
-
 </script>
 
 </body>
