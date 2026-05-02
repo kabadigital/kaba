@@ -94,8 +94,11 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({ email, password })
     });
+    console.log("STATUS:", res.status);
 
     const data = await res.json();
+    
+console.log("DATA:", data);
 
     if(res.ok){
 
