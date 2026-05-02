@@ -1763,3 +1763,14 @@ body {
   font-size: 13px;
   letter-spacing: 0.5px;
 }
+.auth-area a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 15px;
+  transition: 0.3s;
+}
+
+.auth-area a:hover {
+  color: #fbbf24;
+}
