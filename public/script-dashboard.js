@@ -246,6 +246,7 @@ try {
     }
 
     biens.forEach(b => {
+      console.log("AGENT DATA:", b.agentId);
       const agentPhoto = b.agentId?.photo && b.agentId.photo.startsWith("http")
   ? b.agentId.photo
   : "https://ui-avatars.com/api/?name=Agent&background=000&color=fff";
