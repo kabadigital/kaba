@@ -114,7 +114,7 @@
 <script src="script-public.js"></script>
 
 <script>
-  const isLoggedIn = localStorage.getItem("userLoggedIn");
+  const isLoggedIn = !!localStorage.getItem("token");
 
   const loginLink = document.getElementById("loginLink");
   const accountLink = document.getElementById("accountLink");
