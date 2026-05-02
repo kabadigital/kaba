@@ -119,16 +119,25 @@
   const isLoggedIn = localStorage.getItem("userLoggedIn") === "true";
 
   const loginLink = document.getElementById("loginLink");
+  const registerLink = document.querySelector("a[href='register.html']");
   const accountLink = document.getElementById("accountLink");
 
-  if (!loginLink || !accountLink) return;
+  if (!loginLink || !registerLink || !accountLink) return;
 
   if (isLoggedIn) {
+
+    // 🔥 CONNECTÉ
     loginLink.style.display = "none";
+    registerLink.style.display = "none";
     accountLink.style.display = "inline-block";
+
   } else {
+
+    // ❌ PAS CONNECTÉ
     loginLink.style.display = "inline-block";
+    registerLink.style.display = "inline-block";
     accountLink.style.display = "none";
+
   }
 
 });
