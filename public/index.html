@@ -21,7 +21,7 @@
 
     <div class="auth-area">
   <a href="login.html" id="loginLink">Connexion</a>
-  <a href="register.html">Inscription</a>
+  <a href="register.html" id="registerLink">Inscription</a>
   <a href="dashboard.html" id="accountLink" style="display:none;">Mon compte</a>
 </div>
 
@@ -119,21 +119,19 @@
   const isLoggedIn = localStorage.getItem("userLoggedIn") === "true";
 
   const loginLink = document.getElementById("loginLink");
-  const registerLink = document.querySelector("a[href='register.html']");
+  const registerLink = document.getElementById("registerLink");
   const accountLink = document.getElementById("accountLink");
 
   if (!loginLink || !registerLink || !accountLink) return;
 
   if (isLoggedIn) {
 
-    // 🔥 CONNECTÉ
     loginLink.style.display = "none";
     registerLink.style.display = "none";
     accountLink.style.display = "inline-block";
 
   } else {
 
-    // ❌ PAS CONNECTÉ
     loginLink.style.display = "inline-block";
     registerLink.style.display = "inline-block";
     accountLink.style.display = "none";
