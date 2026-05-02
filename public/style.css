@@ -1662,3 +1662,22 @@ body {
   font-size: 14px;
   color: #64748b;
 }
+.footer-box.brand p {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+.footer-box.brand h2 {
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.tagline {
+  font-size: 14px;
+  color: #cbd5f5;
+}
+
+.sub-tagline {
+  font-size: 13px;
+  color: #94a3b8;
+  font-style: italic;
+}
