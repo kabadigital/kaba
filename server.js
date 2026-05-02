@@ -218,7 +218,17 @@ if(agent.isBanned){
 
     const token = jwt.sign({ id: agent._id, role: agent.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-    res.json({ token, agent: { id: agent._id, name: agent.name, role: agent.role, whatsapp: agent.whatsapp, phone: agent.phone } });
+    res.json({
+  token,
+  agent: {
+    id: agent._id,
+    name: agent.name,
+    role: agent.role,
+    whatsapp: agent.whatsapp,
+    phone: agent.phone,
+    photo: agent.photo // ✅ AJOUT ICI
+  }
+});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -325,13 +335,13 @@ app.get("/properties", auth, async (req, res) => {
 
     // 🛠️ ADMIN → voit tout
     if(req.role === "admin"){
-      biens = await Property.find().populate("agentId", "name role");
+      biens = await Property.find().populate("agentId", "name phone photo")
     }
 
     // 👤 AGENT / COURTIER → voit ses biens
     else{
       biens = await Property.find({ agentId: req.agentId })
-        .populate("agentId", "name role");
+        .populate("agentId", "name phone whatsapp photo role isCertified")
     }
 
     res.json(biens);
@@ -371,7 +381,7 @@ app.put("/admin/ban/:id", auth, async (req, res) => {
 app.get("/properties/:id", async (req, res) => {
   try {
     const property = await Property.findById(req.params.id)
-      .populate("agentId", "name whatsapp phone role isCertified rating isPremium");
+      .populate("agentId", "name whatsapp phone photo role isCertified rating isPremium")
 
     if (!property) return res.status(404).json({ message: "Bien non trouvé" });
 
@@ -447,7 +457,7 @@ app.get("/admin/data", async (req, res) => {
   try {
 
     const biens = await Property.find()
-      .populate("agentId", "name phone")
+      .populate("agentId", "name phone photo")
       .sort({ createdAt: -1 });
 
     const agents = await Agent.find();
