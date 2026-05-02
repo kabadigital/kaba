@@ -1596,3 +1596,69 @@ body {
 .agent-avatar:hover {
   transform: scale(1.05);
 }
+.footer-premium {
+  background: #0f172a;
+  color: #e5e7eb;
+  padding: 60px 20px 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-box h2 {
+  color: #ffffff;
+  font-size: 24px;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+}
+
+.footer-box h3 {
+  color: #cbd5f5;
+  margin-bottom: 15px;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.footer-box a {
+  display: block;
+  color: #94a3b8;
+  text-decoration: none;
+  margin-bottom: 8px;
+  transition: 0.3s;
+}
+
+.footer-box a:hover {
+  color: #fbbf24;
+  padding-left: 5px;
+}
+
+.footer-box p {
+  color: #94a3b8;
+  margin-bottom: 10px;
+}
+
+.footer-socials a {
+  margin-right: 12px;
+  font-size: 18px;
+  color: #94a3b8;
+  transition: 0.3s;
+}
+
+.footer-socials a:hover {
+  color: #fbbf24;
+}
+
+.footer-bottom {
+  text-align: center;
+  border-top: 1px solid #1e293b;
+  margin-top: 40px;
+  padding-top: 20px;
+  font-size: 14px;
+  color: #64748b;
+}
