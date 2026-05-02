@@ -278,6 +278,12 @@ media = `<img src="${img.startsWith("http") ? img : API + img}" class="property-
   <div class="media-container">${media}</div>
 
   <div class="property-info">
+
+    <div class="agent-box">
+      <img src="${agentPhoto}" class="agent-photo">
+      <span class="agent-name">${agentName}</span>
+    </div>
+
     <div class="badge-type">${b.propertyType || ""}</div>
 
     <h3>${b.title || ""}</h3>
@@ -288,15 +294,10 @@ media = `<img src="${img.startsWith("http") ? img : API + img}" class="property-
       ${Number(b.price || 0).toLocaleString()} FCFA
     </p>
 
-    <!-- 👇 AJOUT AGENT -->
-    <div class="agent-box">
-      <img src="${agentPhoto}" class="agent-avatar">
-      <span>${agentName}</span>
-    </div>
-
     <button class="delete-btn" onclick="supprimerBien('${b._id}')">
       🗑 Supprimer
     </button>
+
   </div>
 `;
 
