@@ -114,18 +114,24 @@
 <script src="script-public.js"></script>
 
 <script>
+  document.addEventListener("DOMContentLoaded", function () {
+
   const isLoggedIn = localStorage.getItem("userLoggedIn") === "true";
 
-const loginLink = document.getElementById("loginLink");
-const accountLink = document.getElementById("accountLink");
+  const loginLink = document.getElementById("loginLink");
+  const accountLink = document.getElementById("accountLink");
 
-if (isLoggedIn) {
-  loginLink.style.display = "none";
-  accountLink.style.display = "inline-block";
-} else {
-  loginLink.style.display = "inline-block";
-  accountLink.style.display = "none";
-}
+  if (!loginLink || !accountLink) return;
+
+  if (isLoggedIn) {
+    loginLink.style.display = "none";
+    accountLink.style.display = "inline-block";
+  } else {
+    loginLink.style.display = "inline-block";
+    accountLink.style.display = "none";
+  }
+
+});
 </script>
 
 <footer class="footer-premium">
