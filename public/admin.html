@@ -270,23 +270,26 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ================= CHARGER ================= */
 async function chargerDashboard(){
   try{
-    const res = await fetch(`${API}/properties`, {
-  headers:{
-    headers:{
-  "Authorization": "Bearer " + localStorage.getItem("token")
-}
-  }
-});
-    const biens = await res.json();
 
-    tousLesBiens = biens;
+    const res = await fetch(`${API}/public/properties`);
 
-    document.getElementById("totalBiens").innerText = biens.length;
+    const data = await res.json();
 
-    afficherTable(biens);
+    console.log("DATA DASHBOARD:", data);
+
+    if(!Array.isArray(data)){
+      console.error("API retourne pas un tableau:", data);
+      return;
+    }
+
+    tousLesBiens = data;
+
+    document.getElementById("totalBiens").innerText = data.length;
+
+    afficherTable(data);
 
   }catch(err){
-    console.error(err);
+    console.error("ERROR DASHBOARD:", err);
   }
 }
 
