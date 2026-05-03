@@ -287,11 +287,8 @@ document.addEventListener("DOMContentLoaded", () => {
 async function chargerDashboard() {
   try {
 
-    const res = await fetch(`${API}/properties`, {
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem("token")
-      }
-    });
+    const res = await fetch(`${API}/public/properties?page=1&limit=100`);
+    
 
     const biens = await res.json();
 
@@ -341,11 +338,8 @@ function afficherTableBiens(biens) {
 async function chargerUsers() {
   try {
 
-    const res = await fetch(`${API}/admin/users`, {
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem("token")
-      }
-    });
+    const res = await fetch(`${API}/public/properties?page=1&limit=100`);
+      
 
     const users = await res.json();
 
@@ -398,10 +392,10 @@ async function supprimer(id){
 
   try{
 
-    const res = await fetch(`${API}/properties/${id}`, {
+     const res = await fetch(`${API}/properties/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
+        "Authorization": localStorage.getItem("token")
       }
     });
 
