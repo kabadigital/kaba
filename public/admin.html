@@ -238,21 +238,12 @@ input{
 
 <script>
 
-  console.log("🔥 ADMIN VERSION ACTIVE :", new Date().toISOString());
-
-const role = localStorage.getItem("role");
-
-const token = localStorage.getItem("token");
-
-if(!token){
-  alert("Session expirée");
-  window.location.href = "login.html";
-}
+   localStorage.setItem("role", data.agent.role);
 
 if(role !== "admin"){
   alert("Accès refusé");
   window.location.href = "login.html";
-}
+} 
 
 const API = "https://api.kaba.digital";
 
@@ -270,26 +261,21 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ================= CHARGER ================= */
 async function chargerDashboard(){
   try{
+    const res = await fetch(`${API}/properties`, {
+  headers:{
+    "Authorization": localStorage.getItem("token")
+  }
+});
+    const biens = await res.json();
 
-    const res = await fetch(`${API}/public/properties`);
+    tousLesBiens = biens;
 
-    const data = await res.json();
+    document.getElementById("totalBiens").innerText = biens.length;
 
-    console.log("DATA DASHBOARD:", data);
-
-    if(!Array.isArray(data)){
-      console.error("API retourne pas un tableau:", data);
-      return;
-    }
-
-    tousLesBiens = data;
-
-    document.getElementById("totalBiens").innerText = data.length;
-
-    afficherTable(data);
+    afficherTable(biens);
 
   }catch(err){
-    console.error("ERROR DASHBOARD:", err);
+    console.error(err);
   }
 }
 

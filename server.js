@@ -52,23 +52,6 @@ app.get("/healthz", (req, res) => {
   res.status(200).send("OK");
 });
 
-app.get("/debug", async (req, res) => {
-  try {
-    const agents = await Agent.find();
-    const biens = await Property.find();
-
-    res.json({
-      totalAgents: agents.length,
-      totalBiens: biens.length,
-      agents,
-      biens
-    });
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 /* DOSSIER UPLOADS */
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -85,9 +68,8 @@ app.use(express.static(path.join(__dirname, "public")));
 async function startServer() {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-  serverSelectionTimeoutMS: 10000,
-  tls: true
-});
+      serverSelectionTimeoutMS: 10000
+    });
 
     console.log("✅ MongoDB connecté");
 
@@ -207,14 +189,15 @@ app.post("/agents/register", upload.single("photo"), async (req, res) => {
   try {
     const hashed = await bcrypt.hash(req.body.password, 10);
     const agent = await Agent.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: hashed,
-      whatsapp: req.body.whatsapp,
-      phone: req.body.phone,
-      photo: req.file ? "/uploads/" + req.file.filename : "",
-      role: req.body.role
-    });
+  name: req.body.name,
+  email: req.body.email,
+  password: hashed,
+  whatsapp: req.body.whatsapp,
+  phone: req.body.phone,
+  neighborhood: req.body.neighborhood, // ✅ AJOUT ICI
+  photo: req.file ? "/uploads/" + req.file.filename : "",
+  role: req.body.role
+});
     res.json({ success: true, message: "Utilisateur créé", agent });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -326,17 +309,6 @@ const videos = req.files["videos"]
 
 /* ============================= ROUTE GET TOUS LES BIENS ============================= */
 app.get("/public/properties", async (req, res) => {
-  app.get("/debug", async (req, res) => {
-  try {
-    const biens = await Property.find();
-    res.json({
-      count: biens.length,
-      biens
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
   try {
 
     const page = parseInt(req.query.page) || 1;
@@ -357,14 +329,6 @@ app.get("/public/properties", async (req, res) => {
 });
 
 app.get("/properties", auth, async (req, res) => {
-  app.get("/public/properties", async (req, res) => {
-  try {
-    const biens = await Property.find();
-    res.json(biens);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
 
   try{
 
