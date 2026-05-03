@@ -238,13 +238,15 @@ input{
 
 <script>
 
-   localStorage.setItem("role", data.agent.role);
+// ✅ FIX ROLE (corrigé)
+const role = localStorage.getItem("role");
 
 if(role !== "admin"){
   alert("Accès refusé");
   window.location.href = "login.html";
-} 
+}
 
+// ✅ API
 const API = "https://api.kaba.digital";
 
 let tousLesBiens = [];
@@ -253,8 +255,9 @@ let currentId = null;
 /* ================= INIT ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("TOKEN:", localStorage.getItem("token")); // debug
   chargerDashboard();
-  chargerUsers(); // 🔥 IMPORTANT
+  chargerUsers();
 });
 
 
@@ -262,10 +265,11 @@ document.addEventListener("DOMContentLoaded", () => {
 async function chargerDashboard(){
   try{
     const res = await fetch(`${API}/properties`, {
-  headers:{
-    "Authorization": localStorage.getItem("token")
-  }
-});
+      headers:{
+        "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
+      }
+    });
+
     const biens = await res.json();
 
     tousLesBiens = biens;
@@ -283,8 +287,8 @@ async function chargerUsers(){
 
   const res = await fetch(`${API}/agents`, {
     headers: {
-  Authorization: "Bearer " + localStorage.getItem("token")
-}
+      Authorization: "Bearer " + localStorage.getItem("token") // ✅ FIX
+    }
   });
 
   const users = await res.json();
@@ -367,7 +371,7 @@ async function supprimer(id){
     const res = await fetch(`${API}/properties/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
       }
     });
 
@@ -392,7 +396,7 @@ async function banUser(id){
   const res = await fetch(`${API}/admin/ban/${id}`, {
     method:"PUT",
     headers:{
-      "Authorization": localStorage.getItem("token")
+      "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
     }
   });
 
@@ -441,7 +445,7 @@ async function saveEdit(){
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": localStorage.getItem("token")
+        "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
       },
       body: JSON.stringify(updated)
     });
@@ -461,6 +465,7 @@ async function saveEdit(){
   }
 
 }
+
 async function createAdmin(){
 
   const name = document.getElementById("adminName").value;
@@ -478,7 +483,7 @@ async function createAdmin(){
       method:"POST",
       headers:{
         "Content-Type":"application/json",
-        "Authorization": localStorage.getItem("token")
+        "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
       },
       body: JSON.stringify({ name, email, password })
     });
@@ -488,7 +493,6 @@ async function createAdmin(){
     if(res.ok){
       alert("✅ Admin créé !");
       
-      // reset champs
       document.getElementById("adminName").value = "";
       document.getElementById("adminEmail").value = "";
       document.getElementById("adminPassword").value = "";
