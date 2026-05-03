@@ -1,65 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Admin</title>
+
+<style>
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#0f172a;
+  color:white;
+  margin:0;
+  padding:20px;
+}
+
+/* HEADER */
+h1{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+  margin-bottom:30px;
+}
+
+/* CARDS */
+.card{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px);
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+}
+
+.card h2{
+  font-size:28px;
+  color:#38bdf8;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+th, td{
+  padding:12px;
+  text-align:left;
+}
+
+th{
+  background:#1e293b;
+}
+
+tr{
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+/* BUTTONS */
+button{
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin-right:5px;
+}
+
+.delete{
+  background:#ef4444;
+  color:white;
+}
+
+.delete:hover{
+  background:#dc2626;
+}
+
+.edit{
+  background:#22c55e;
+  color:white;
+}
+
+.edit:hover{
+  background:#16a34a;
+}
+
+/* SEARCH */
+input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin:15px 0;
+}
+
+/* MODAL */
+#editModal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-box{
+  background:white;
+  color:black;
+  padding:25px;
+  border-radius:10px;
+  width:350px;
+}
+
+.modal-box input{
+  width:100%;
+  margin-bottom:10px;
+  padding:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>📊 Dashboard Admin</h1>
+
+<div class="grid">
+
+  <div class="card">
+    <p>🏠 Biens</p>
+    <h2 id="totalBiens">0</h2>
+  </div>
+
+</div>
+<h2>👑 Créer un Admin</h2>
+
+<div style="
+  background:rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+">
+</div>
+
+<!-- 👇 AJOUT CLOUDINARY ICI -->
+<h2>📸 Upload médias (Cloudinary)</h2>
+
+<div style="
+  background:rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+">
+
+  <input 
+    type="file" 
+    id="mediaFiles" 
+    multiple 
+    accept="image/*,video/*"
+  >
+
+  <br><br>
+
+  <button onclick="uploadToCloudinary()">
+    ☁️ Upload Cloudinary
+  </button>
+
+  <div id="uploadStatus" style="margin-top:10px;"></div>
+
+</div>
+
+  <input id="adminName" placeholder="Nom"><br><br>
+  <input id="adminEmail" placeholder="Email"><br><br>
+  <input id="adminPassword" type="password" placeholder="Mot de passe"><br><br>
+
+  <button onclick="createAdmin()">Créer Admin</button>
+
+</div>
+
+<h2>📋 Liste des biens</h2>
+
+<h2>👥 Utilisateurs</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nom</th>
+      <th>Email</th>
+      <th>Rôle</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="tableUsers"></tbody>
+</table>
+
+<input 
+  type="text" 
+  id="searchInput" 
+  placeholder="🔍 Rechercher..."
+  oninput="filtrerBiens()"
+/>
+
+<table>
+  <thead>
+    <tr>
+      <th>Titre</th>
+      <th>Ville</th>
+      <th>Agent</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="tableBiens"></tbody>
+</table>
+
+<!-- MODAL -->
+<div id="editModal">
+  <div class="modal-box">
+    <h3>Modifier le bien</h3>
+
+    <input id="editTitle" placeholder="Titre">
+    <input id="editCity" placeholder="Ville">
+    <input id="editPrice" placeholder="Prix">
+
+    <button onclick="saveEdit()">💾 Enregistrer</button>
+    <button onclick="attacherMedia()">📎 Attacher médias uploadés</button>
+    <button onclick="closeModal()">❌ Fermer</button>
+  </div>
+</div>
+
 <script>
 
-const API = "https://kaba-dev.onrender.com";
+   localStorage.setItem("role", data.agent.role);
+
+if(role !== "admin"){
+  alert("Accès refusé");
+  window.location.href = "login.html";
+} 
+
+const API = "https://api.kaba.digital";
 
 let tousLesBiens = [];
 let currentId = null;
 
-/* ================= SAFE API FETCH ================= */
-async function apiFetch(url, options = {}) {
-  try {
-    const token = localStorage.getItem("token");
+/* ================= INIT ================= */
 
-    const res = await fetch(url, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-        Authorization: token ? `Bearer ${token}` : ""
-      }
-    });
+document.addEventListener("DOMContentLoaded", () => {
+  chargerDashboard();
+  chargerUsers(); // 🔥 IMPORTANT
+});
 
-    const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      throw new Error(data.message || "Erreur serveur");
-    }
+/* ================= CHARGER ================= */
+async function chargerDashboard(){
+  try{
+    const res = await fetch(`${API}/properties`, {
+  headers:{
+    "Authorization": localStorage.getItem("token")
+  }
+});
+    const biens = await res.json();
 
-    return data;
+    tousLesBiens = biens;
 
-  } catch (err) {
-    console.error("API ERROR:", err.message);
-    alert(err.message);
-    return null;
+    document.getElementById("totalBiens").innerText = biens.length;
+
+    afficherTable(biens);
+
+  }catch(err){
+    console.error(err);
   }
 }
 
-/* ================= INIT ================= */
-document.addEventListener("DOMContentLoaded", () => {
-  chargerDashboard();
-  chargerUsers();
-});
-
-/* ================= DASHBOARD BIENS ================= */
-async function chargerDashboard(){
-
-  const biens = await apiFetch(`${API}/public/properties`);
-
-  if(!biens) return;
-
-  tousLesBiens = biens;
-
-  document.getElementById("totalBiens").innerText = biens.length;
-
-  afficherTable(biens);
-}
-
-/* ================= USERS ================= */
 async function chargerUsers(){
 
-  const users = await apiFetch(`${API}/agents`);
+  const res = await fetch(`${API}/agents`, {
+    headers: {
+  Authorization: "Bearer " + localStorage.getItem("token")
+}
+  });
 
-  if(!users) return;
+  const users = await res.json();
 
   const table = document.getElementById("tableUsers");
   table.innerHTML = "";
@@ -83,9 +311,10 @@ async function chargerUsers(){
     table.appendChild(tr);
 
   });
+
 }
 
-/* ================= TABLE BIENS ================= */
+/* ================= TABLE ================= */
 function afficherTable(biens){
 
   const table = document.getElementById("tableBiens");
@@ -100,59 +329,85 @@ function afficherTable(biens){
       <td>${b.city}</td>
       <td>${b.agentId?.name || "—"}</td>
       <td>
-        <button onclick="ouvrirEdit('${b._id}')">Modifier</button>
-        <button onclick="supprimer('${b._id}')">Supprimer</button>
+        <button class="edit" onclick="ouvrirEdit('${b._id}')">Modifier</button>
+        <button class="delete" onclick="supprimer('${b._id}')">Supprimer</button>
       </td>
     `;
 
     table.appendChild(tr);
 
   });
+
 }
 
-/* ================= SEARCH ================= */
+/* ================= RECHERCHE ================= */
 function filtrerBiens(){
 
   const value = document.getElementById("searchInput").value.toLowerCase();
 
-  const resultats = tousLesBiens.filter(b =>
-    b.title?.toLowerCase().includes(value) ||
-    b.city?.toLowerCase().includes(value) ||
-    b.agentId?.name?.toLowerCase().includes(value)
-  );
+  const resultats = tousLesBiens.filter(b => {
+    return (
+      b.title?.toLowerCase().includes(value) ||
+      b.city?.toLowerCase().includes(value) ||
+      b.agentId?.name?.toLowerCase().includes(value)
+    );
+  });
 
   afficherTable(resultats);
+
 }
 
-/* ================= DELETE BIEN ================= */
+/* ================= SUPPRIMER ================= */
 async function supprimer(id){
 
-  if(!confirm("Supprimer ce bien ?")) return;
+  if(!confirm("❗ Supprimer ce bien ?")) return;
 
-  const data = await apiFetch(`${API}/properties/${id}`, {
-    method: "DELETE"
-  });
+  try{
 
-  if(data){
-    alert("Bien supprimé");
-    chargerDashboard();
+    const res = await fetch(`${API}/properties/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": localStorage.getItem("token")
+      }
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+      alert("✅ Bien supprimé");
+      chargerDashboard();
+    }else{
+      alert(data.message || "Erreur suppression");
+    }
+
+  }catch(err){
+    console.error(err);
+    alert("❌ Erreur serveur");
   }
+
 }
 
-/* ================= BAN USER ================= */
 async function banUser(id){
 
-  const data = await apiFetch(`${API}/admin/ban/${id}`, {
-    method: "PUT"
+  const res = await fetch(`${API}/admin/ban/${id}`, {
+    method:"PUT",
+    headers:{
+      "Authorization": localStorage.getItem("token")
+    }
   });
 
-  if(data){
-    alert("Mise à jour OK");
+  const data = await res.json();
+
+  if(res.ok){
+    alert("✅ Mise à jour effectuée");
     chargerUsers();
+  }else{
+    alert(data.message);
   }
+
 }
 
-/* ================= OPEN EDIT MODAL ================= */
+/* ================= MODAL ================= */
 function ouvrirEdit(id){
 
   const bien = tousLesBiens.find(b => b._id === id);
@@ -167,12 +422,11 @@ function ouvrirEdit(id){
   document.getElementById("editModal").style.display = "flex";
 }
 
-/* ================= CLOSE MODAL ================= */
 function closeModal(){
   document.getElementById("editModal").style.display = "none";
 }
 
-/* ================= SAVE EDIT ================= */
+/* ================= SAVE ================= */
 async function saveEdit(){
 
   const updated = {
@@ -181,19 +435,32 @@ async function saveEdit(){
     price: document.getElementById("editPrice").value
   };
 
-  const data = await apiFetch(`${API}/properties/${currentId}`, {
-    method: "PUT",
-    body: JSON.stringify(updated)
-  });
+  try{
 
-  if(data){
-    alert("Bien modifié !");
-    closeModal();
-    chargerDashboard();
+    const res = await fetch(`${API}/properties/${currentId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": localStorage.getItem("token")
+      },
+      body: JSON.stringify(updated)
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+      alert("✅ Bien modifié !");
+      closeModal();
+      chargerDashboard();
+    }else{
+      alert(data.message || "Erreur modification");
+    }
+
+  }catch(err){
+    console.error(err);
   }
-}
 
-/* ================= CREATE ADMIN ================= */
+}
 async function createAdmin(){
 
   const name = document.getElementById("adminName").value;
@@ -205,14 +472,39 @@ async function createAdmin(){
     return;
   }
 
-  const data = await apiFetch(`${API}/admin/create`, {
-    method: "POST",
-    body: JSON.stringify({ name, email, password })
-  });
+  try{
 
-  if(data){
-    alert("Admin créé !");
+    const res = await fetch(`${API}/admin/create`, {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization": localStorage.getItem("token")
+      },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+      alert("✅ Admin créé !");
+      
+      // reset champs
+      document.getElementById("adminName").value = "";
+      document.getElementById("adminEmail").value = "";
+      document.getElementById("adminPassword").value = "";
+
+    }else{
+      alert(data.message);
+    }
+
+  }catch(err){
+    console.error(err);
+    alert("Erreur serveur");
   }
+
 }
 
 </script>
+
+</body>
+</html>
