@@ -238,38 +238,16 @@ input{
 
 <script>
 
-  console.log("🔥 NOUVELLE VERSION ADMIN CHARGÉE");
+  console.log("🔥 ADMIN VERSION ACTIVE :", new Date().toISOString());
 
-// ✅ FIX ROLE (corrigé)
-const role = localStorage.getItem("role");
-
-const token = localStorage.getItem("token");
-
-if(!token){
-  alert("Session expirée, reconnecte-toi");
-  window.location.href = "login.html";
-}
+   localStorage.setItem("role", data.agent.role);
 
 if(role !== "admin"){
   alert("Accès refusé");
   window.location.href = "login.html";
-}
+} 
 
-// ✅ API
 const API = "https://api.kaba.digital";
-
-// 🔥 TEST SIMPLE API
-fetch("https://api.kaba.digital/properties", {
-  headers: {
-    Authorization: "Bearer " + localStorage.getItem("token")
-  }
-})
-.then(r => r.json())
-.then(data => {
-  console.log("🔥 TEST RESULT:", data);
-  console.log("📦 IS ARRAY:", Array.isArray(data));
-  console.log("📏 LENGTH:", data?.length);
-});
 
 let tousLesBiens = [];
 let currentId = null;
@@ -277,96 +255,92 @@ let currentId = null;
 /* ================= INIT ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("TOKEN:", localStorage.getItem("token")); // debug
   chargerDashboard();
-  chargerUsers();
+  chargerUsers(); // 🔥 IMPORTANT
 });
 
 
 /* ================= CHARGER ================= */
-async function chargerDashboard() {
-  try {
-
-    const res = await fetch(`${API}/public/properties?page=1&limit=100`);
-    
-
+async function chargerDashboard(){
+  try{
+    const res = await fetch(`${API}/properties`, {
+  headers:{
+    "Authorization": localStorage.getItem("token")
+  }
+});
     const biens = await res.json();
-
-    console.log("BIENS:", biens);
-
-    if (!Array.isArray(biens)) {
-      console.error("API invalide", biens);
-      return;
-    }
 
     tousLesBiens = biens;
 
     document.getElementById("totalBiens").innerText = biens.length;
 
-    afficherTableBiens(biens);
+    afficherTable(biens);
 
-  } catch (err) {
-    console.error("ERROR DASHBOARD:", err);
+  }catch(err){
+    console.error(err);
   }
 }
 
-function afficherTableBiens(biens) {
+async function chargerUsers(){
+
+  const res = await fetch(`${API}/agents`, {
+    headers: {
+  Authorization: "Bearer " + localStorage.getItem("token")
+}
+  });
+
+  const users = await res.json();
+
+  const table = document.getElementById("tableUsers");
+  table.innerHTML = "";
+
+  users.forEach(u => {
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+      <td>${u.role}</td>
+      <td>${u.isBanned ? "🚫 Banni" : "✅ Actif"}</td>
+      <td>
+        <button onclick="banUser('${u._id}')">
+          ${u.isBanned ? "Débannir" : "Bannir"}
+        </button>
+      </td>
+    `;
+
+    table.appendChild(tr);
+
+  });
+
+}
+
+/* ================= TABLE ================= */
+function afficherTable(biens){
 
   const table = document.getElementById("tableBiens");
   table.innerHTML = "";
 
-  if (!biens.length) {
-    table.innerHTML = `<tr><td colspan="4">Aucun bien trouvé</td></tr>`;
-    return;
-  }
-
   biens.forEach(b => {
-    table.innerHTML += `
-      <tr>
-        <td>${b.title || "—"}</td>
-        <td>${b.city || "—"}</td>
-        <td>${b.agentId?.name || "—"}</td>
-        <td>
-          <button onclick="ouvrirEdit('${b._id}')">Modifier</button>
-          <button onclick="supprimer('${b._id}')">Supprimer</button>
-        </td>
-      </tr>
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${b.title}</td>
+      <td>${b.city}</td>
+      <td>${b.agentId?.name || "—"}</td>
+      <td>
+        <button class="edit" onclick="ouvrirEdit('${b._id}')">Modifier</button>
+        <button class="delete" onclick="supprimer('${b._id}')">Supprimer</button>
+      </td>
     `;
+
+    table.appendChild(tr);
+
   });
+
 }
-
-async function chargerUsers() {
-  try {
-
-    const res = await fetch(`${API}/public/properties?page=1&limit=100`);
-      
-
-    const users = await res.json();
-
-    const table = document.getElementById("tableUsers");
-    table.innerHTML = "";
-
-    if (!Array.isArray(users)) return;
-
-    users.forEach(u => {
-      table.innerHTML += `
-        <tr>
-          <td>${u.name}</td>
-          <td>${u.email}</td>
-          <td>${u.role}</td>
-          <td>${u.status || "active"}</td>
-          <td>
-            <button onclick="banUser('${u._id}')">Ban</button>
-          </td>
-        </tr>
-      `;
-    });
-
-  } catch (err) {
-    console.error("ERROR USERS:", err);
-  }
-}
-
 
 /* ================= RECHERCHE ================= */
 function filtrerBiens(){
@@ -381,7 +355,7 @@ function filtrerBiens(){
     );
   });
 
-  afficherTableBiens(resultats);
+  afficherTable(resultats);
 
 }
 
@@ -392,7 +366,7 @@ async function supprimer(id){
 
   try{
 
-     const res = await fetch(`${API}/properties/${id}`, {
+    const res = await fetch(`${API}/properties/${id}`, {
       method: "DELETE",
       headers: {
         "Authorization": localStorage.getItem("token")
@@ -420,7 +394,7 @@ async function banUser(id){
   const res = await fetch(`${API}/admin/ban/${id}`, {
     method:"PUT",
     headers:{
-      "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
+      "Authorization": localStorage.getItem("token")
     }
   });
 
@@ -469,7 +443,7 @@ async function saveEdit(){
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
+        "Authorization": localStorage.getItem("token")
       },
       body: JSON.stringify(updated)
     });
@@ -489,7 +463,6 @@ async function saveEdit(){
   }
 
 }
-
 async function createAdmin(){
 
   const name = document.getElementById("adminName").value;
@@ -507,7 +480,7 @@ async function createAdmin(){
       method:"POST",
       headers:{
         "Content-Type":"application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
+        "Authorization": localStorage.getItem("token")
       },
       body: JSON.stringify({ name, email, password })
     });
@@ -517,6 +490,7 @@ async function createAdmin(){
     if(res.ok){
       alert("✅ Admin créé !");
       
+      // reset champs
       document.getElementById("adminName").value = "";
       document.getElementById("adminEmail").value = "";
       document.getElementById("adminPassword").value = "";
