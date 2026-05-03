@@ -238,7 +238,7 @@ input{
 
 <script>
 
-   localStorage.setItem("role", data.agent.role);
+   const role = localStorage.getItem("role");
 
 if(role !== "admin"){
   alert("Accès refusé");
@@ -263,7 +263,7 @@ async function chargerDashboard(){
   try{
     const res = await fetch(`${API}/properties`, {
   headers:{
-    "Authorization": localStorage.getItem("token")
+    "Authorization": "Bearer " + localStorage.getItem("token")
   }
 });
     const biens = await res.json();
@@ -367,7 +367,7 @@ async function supprimer(id){
     const res = await fetch(`${API}/properties/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": "Bearer " + localStorage.getItem("token")
       }
     });
 
@@ -392,7 +392,7 @@ async function banUser(id){
   const res = await fetch(`${API}/admin/ban/${id}`, {
     method:"PUT",
     headers:{
-      "Authorization": localStorage.getItem("token")
+      "Authorization": "Bearer " + localStorage.getItem("token")
     }
   });
 
@@ -441,7 +441,7 @@ async function saveEdit(){
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": localStorage.getItem("token")
+        "Authorization": "Bearer " + localStorage.getItem("token")
       },
       body: JSON.stringify(updated)
     });
@@ -478,7 +478,7 @@ async function createAdmin(){
       method:"POST",
       headers:{
         "Content-Type":"application/json",
-        "Authorization": localStorage.getItem("token")
+        "Authorization": "Bearer " + localStorage.getItem("token")
       },
       body: JSON.stringify({ name, email, password })
     });
