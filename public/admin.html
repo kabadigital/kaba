@@ -240,12 +240,19 @@ input{
 
   console.log("🔥 ADMIN VERSION ACTIVE :", new Date().toISOString());
 
-   localStorage.setItem("role", data.agent.role);
+const role = localStorage.getItem("role");
+
+const token = localStorage.getItem("token");
+
+if(!token){
+  alert("Session expirée");
+  window.location.href = "login.html";
+}
 
 if(role !== "admin"){
   alert("Accès refusé");
   window.location.href = "login.html";
-} 
+}
 
 const API = "https://api.kaba.digital";
 
@@ -265,7 +272,9 @@ async function chargerDashboard(){
   try{
     const res = await fetch(`${API}/properties`, {
   headers:{
-    "Authorization": localStorage.getItem("token")
+    headers:{
+  "Authorization": "Bearer " + localStorage.getItem("token")
+}
   }
 });
     const biens = await res.json();
