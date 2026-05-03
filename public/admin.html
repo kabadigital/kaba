@@ -241,6 +241,13 @@ input{
 // ✅ FIX ROLE (corrigé)
 const role = localStorage.getItem("role");
 
+const token = localStorage.getItem("token");
+
+if(!token){
+  alert("Session expirée, reconnecte-toi");
+  window.location.href = "login.html";
+}
+
 if(role !== "admin"){
   alert("Accès refusé");
   window.location.href = "login.html";
@@ -264,37 +271,48 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ================= CHARGER ================= */
 async function chargerDashboard(){
   try{
+
     const res = await fetch(`${API}/properties`, {
       headers:{
         "Authorization": "Bearer " + localStorage.getItem("token")
       }
     });
 
-    const biens = await res.json();
+    const data = await res.json();
 
-    console.log("BIENS:", biens); // 🔥 AJOUT
+    console.log("BIENS DEBUG:", data);
 
-    // ⚠️ Si erreur API
     if(!res.ok){
-      console.error("ERREUR API:", biens);
-      alert(biens.message || "Erreur API");
+      console.error("API ERROR:", data);
       return;
     }
 
-    // ⚠️ Si ce n’est pas un tableau
-    if(!Array.isArray(biens)){
-      console.error("FORMAT INVALIDE:", biens);
-      return;
-    }
+    const biens = Array.isArray(data) ? data : data.properties || [];
 
+    // 🔥 IMPORTANT FIX
     tousLesBiens = biens;
 
     document.getElementById("totalBiens").innerText = biens.length;
 
-    afficherTable(biens);
+    const table = document.getElementById("tableBiens");
+    table.innerHTML = "";
+
+    biens.forEach(b => {
+      table.innerHTML += `
+        <tr>
+          <td>${b.title || ""}</td>
+          <td>${b.city || ""}</td>
+          <td>${b.agentId?.name || "—"}</td>
+          <td>
+            <button class="edit" onclick="ouvrirEdit('${b._id}')">Modifier</button>
+            <button class="delete" onclick="supprimer('${b._id}')">Supprimer</button>
+          </td>
+        </tr>
+      `;
+    });
 
   }catch(err){
-    console.error(err);
+    console.error("ERROR DASHBOARD:", err);
   }
 }
 
