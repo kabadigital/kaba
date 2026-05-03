@@ -266,11 +266,26 @@ async function chargerDashboard(){
   try{
     const res = await fetch(`${API}/properties`, {
       headers:{
-        "Authorization": "Bearer " + localStorage.getItem("token") // ✅ FIX
+        "Authorization": "Bearer " + localStorage.getItem("token")
       }
     });
 
     const biens = await res.json();
+
+    console.log("BIENS:", biens); // 🔥 AJOUT
+
+    // ⚠️ Si erreur API
+    if(!res.ok){
+      console.error("ERREUR API:", biens);
+      alert(biens.message || "Erreur API");
+      return;
+    }
+
+    // ⚠️ Si ce n’est pas un tableau
+    if(!Array.isArray(biens)){
+      console.error("FORMAT INVALIDE:", biens);
+      return;
+    }
 
     tousLesBiens = biens;
 
@@ -281,41 +296,6 @@ async function chargerDashboard(){
   }catch(err){
     console.error(err);
   }
-}
-
-async function chargerUsers(){
-
-  const res = await fetch(`${API}/agents`, {
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token") // ✅ FIX
-    }
-  });
-
-  const users = await res.json();
-
-  const table = document.getElementById("tableUsers");
-  table.innerHTML = "";
-
-  users.forEach(u => {
-
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${u.name}</td>
-      <td>${u.email}</td>
-      <td>${u.role}</td>
-      <td>${u.isBanned ? "🚫 Banni" : "✅ Actif"}</td>
-      <td>
-        <button onclick="banUser('${u._id}')">
-          ${u.isBanned ? "Débannir" : "Bannir"}
-        </button>
-      </td>
-    `;
-
-    table.appendChild(tr);
-
-  });
-
 }
 
 /* ================= TABLE ================= */
