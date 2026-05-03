@@ -284,51 +284,92 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* ================= CHARGER ================= */
-async function chargerDashboard(){
-  try{
+async function chargerDashboard() {
+  try {
 
     const res = await fetch(`${API}/properties`, {
-      headers:{
+      headers: {
         "Authorization": "Bearer " + localStorage.getItem("token")
       }
     });
 
-    const data = await res.json();
+    const biens = await res.json();
 
-    console.log("RAW:", data);
+    console.log("BIENS:", biens);
 
-    if(!res.ok){
-      console.error("API ERROR:", data);
+    if (!Array.isArray(biens)) {
+      console.error("API invalide", biens);
       return;
     }
 
-    const biens = Array.isArray(data)
-      ? data
-      : (data.properties || data.data || []);
-
-    console.log("BIENS FINAL:", biens);
+    tousLesBiens = biens;
 
     document.getElementById("totalBiens").innerText = biens.length;
 
-    const table = document.getElementById("tableBiens");
+    afficherTableBiens(biens);
+
+  } catch (err) {
+    console.error("ERROR DASHBOARD:", err);
+  }
+}
+
+function afficherTableBiens(biens) {
+
+  const table = document.getElementById("tableBiens");
+  table.innerHTML = "";
+
+  if (!biens.length) {
+    table.innerHTML = `<tr><td colspan="4">Aucun bien trouvé</td></tr>`;
+    return;
+  }
+
+  biens.forEach(b => {
+    table.innerHTML += `
+      <tr>
+        <td>${b.title || "—"}</td>
+        <td>${b.city || "—"}</td>
+        <td>${b.agentId?.name || "—"}</td>
+        <td>
+          <button onclick="ouvrirEdit('${b._id}')">Modifier</button>
+          <button onclick="supprimer('${b._id}')">Supprimer</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+async function chargerUsers() {
+  try {
+
+    const res = await fetch(`${API}/admin/users`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("token")
+      }
+    });
+
+    const users = await res.json();
+
+    const table = document.getElementById("tableUsers");
     table.innerHTML = "";
 
-    biens.forEach(b => {
+    if (!Array.isArray(users)) return;
+
+    users.forEach(u => {
       table.innerHTML += `
         <tr>
-          <td>${b.title || "—"}</td>
-          <td>${b.city || "—"}</td>
-          <td>${b.agentId?.name || "—"}</td>
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td>${u.role}</td>
+          <td>${u.status || "active"}</td>
           <td>
-            <button onclick="ouvrirEdit('${b._id}')">Modifier</button>
-            <button onclick="supprimer('${b._id}')">Supprimer</button>
+            <button onclick="banUser('${u._id}')">Ban</button>
           </td>
         </tr>
       `;
     });
 
-  }catch(err){
-    console.error("DASHBOARD ERROR:", err);
+  } catch (err) {
+    console.error("ERROR USERS:", err);
   }
 }
 
@@ -346,7 +387,7 @@ function filtrerBiens(){
     );
   });
 
-  afficherTable(resultats);
+  afficherTableBiens(resultats);
 
 }
 
