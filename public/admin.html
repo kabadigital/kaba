@@ -238,12 +238,21 @@ input{
 
 <script>
 
-   localStorage.setItem("role", data.agent.role);
+  console.log("🔥 ADMIN VERSION ACTIVE :", new Date().toISOString());
+
+const role = localStorage.getItem("role");
+
+const token = localStorage.getItem("token");
+
+if(!token){
+  alert("Session expirée");
+  window.location.href = "login.html";
+}
 
 if(role !== "admin"){
   alert("Accès refusé");
   window.location.href = "login.html";
-} 
+}
 
 const API = "https://api.kaba.digital";
 
