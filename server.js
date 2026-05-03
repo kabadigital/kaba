@@ -68,8 +68,9 @@ app.use(express.static(path.join(__dirname, "public")));
 async function startServer() {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 10000
-    });
+  serverSelectionTimeoutMS: 10000,
+  tls: true
+});
 
     console.log("✅ MongoDB connecté");
 
