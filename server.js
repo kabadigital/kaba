@@ -309,6 +309,17 @@ const videos = req.files["videos"]
 
 /* ============================= ROUTE GET TOUS LES BIENS ============================= */
 app.get("/public/properties", async (req, res) => {
+  app.get("/debug", async (req, res) => {
+  try {
+    const biens = await Property.find();
+    res.json({
+      count: biens.length,
+      biens
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
   try {
 
     const page = parseInt(req.query.page) || 1;
