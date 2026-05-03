@@ -256,6 +256,19 @@ if(role !== "admin"){
 // ✅ API
 const API = "https://api.kaba.digital";
 
+// 🔥 TEST SIMPLE API
+fetch("https://api.kaba.digital/properties", {
+  headers: {
+    Authorization: "Bearer " + localStorage.getItem("token")
+  }
+})
+.then(r => r.json())
+.then(data => {
+  console.log("🔥 TEST RESULT:", data);
+  console.log("📦 IS ARRAY:", Array.isArray(data));
+  console.log("📏 LENGTH:", data?.length);
+});
+
 let tousLesBiens = [];
 let currentId = null;
 
@@ -280,17 +293,18 @@ async function chargerDashboard(){
 
     const data = await res.json();
 
-    console.log("BIENS DEBUG:", data);
+    console.log("RAW:", data);
 
     if(!res.ok){
       console.error("API ERROR:", data);
       return;
     }
 
-    const biens = Array.isArray(data) ? data : data.properties || [];
+    const biens = Array.isArray(data)
+      ? data
+      : (data.properties || data.data || []);
 
-    // 🔥 IMPORTANT FIX
-    tousLesBiens = biens;
+    console.log("BIENS FINAL:", biens);
 
     document.getElementById("totalBiens").innerText = biens.length;
 
@@ -300,47 +314,22 @@ async function chargerDashboard(){
     biens.forEach(b => {
       table.innerHTML += `
         <tr>
-          <td>${b.title || ""}</td>
-          <td>${b.city || ""}</td>
+          <td>${b.title || "—"}</td>
+          <td>${b.city || "—"}</td>
           <td>${b.agentId?.name || "—"}</td>
           <td>
-            <button class="edit" onclick="ouvrirEdit('${b._id}')">Modifier</button>
-            <button class="delete" onclick="supprimer('${b._id}')">Supprimer</button>
+            <button onclick="ouvrirEdit('${b._id}')">Modifier</button>
+            <button onclick="supprimer('${b._id}')">Supprimer</button>
           </td>
         </tr>
       `;
     });
 
   }catch(err){
-    console.error("ERROR DASHBOARD:", err);
+    console.error("DASHBOARD ERROR:", err);
   }
 }
 
-/* ================= TABLE ================= */
-function afficherTable(biens){
-
-  const table = document.getElementById("tableBiens");
-  table.innerHTML = "";
-
-  biens.forEach(b => {
-
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${b.title}</td>
-      <td>${b.city}</td>
-      <td>${b.agentId?.name || "—"}</td>
-      <td>
-        <button class="edit" onclick="ouvrirEdit('${b._id}')">Modifier</button>
-        <button class="delete" onclick="supprimer('${b._id}')">Supprimer</button>
-      </td>
-    `;
-
-    table.appendChild(tr);
-
-  });
-
-}
 
 /* ================= RECHERCHE ================= */
 function filtrerBiens(){
