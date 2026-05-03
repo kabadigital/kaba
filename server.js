@@ -52,6 +52,23 @@ app.get("/healthz", (req, res) => {
   res.status(200).send("OK");
 });
 
+app.get("/debug", async (req, res) => {
+  try {
+    const agents = await Agent.find();
+    const biens = await Property.find();
+
+    res.json({
+      totalAgents: agents.length,
+      totalBiens: biens.length,
+      agents,
+      biens
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /* DOSSIER UPLOADS */
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -340,6 +357,14 @@ app.get("/public/properties", async (req, res) => {
 });
 
 app.get("/properties", auth, async (req, res) => {
+  app.get("/public/properties", async (req, res) => {
+  try {
+    const biens = await Property.find();
+    res.json(biens);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
   try{
 
