@@ -250,7 +250,10 @@ app.get("/agents", auth, async (req, res) => {
 app.post(
   "/properties",
   auth,
-  upload.fields([{ name: "images", maxCount: 20 }, { name: "videos", maxCount: 5 }])
+  upload.fields([
+    { name: "images", maxCount: 20 },
+    { name: "videos", maxCount: 5 }
+  ]),
   async (req, res) => {
     try {
 
