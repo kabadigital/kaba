@@ -161,6 +161,16 @@ if (user) {
 async function ajouterBien(e) {
   e.preventDefault();
 
+  const formData = new FormData(e.target);
+
+// 📸 LIMITE FRONTEND (20 images max)
+const images = formData.getAll("images");
+
+if (images.length > 20) {
+  alert("🚫 Maximum 20 images autorisées");
+  return;
+}
+
   const token = localStorage.getItem("token");
   const formData = new FormData(e.target);
 

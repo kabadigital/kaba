@@ -250,40 +250,58 @@ app.get("/agents", auth, async (req, res) => {
 app.post(
   "/properties",
   auth,
-  upload.fields([{ name: "images", maxCount: 10 }, { name: "videos", maxCount: 5 }]),
+  upload.fields([{ name: "images", maxCount: 20 }, { name: "videos", maxCount: 5 }])
   async (req, res) => {
     try {
-      // 🔥 UPLOAD IMAGES CLOUDINARY
-const images = req.files["images"]
-  ? await Promise.all(
-      req.files["images"].map(async file => {
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: "properties"
+
+      // 📸 🔥 LIMITE IMAGES
+const files = req.files?.images || [];
+
+if (files.length > 20) {
+  return res.status(403).json({
+    message: "🚫 Limite atteinte. Vous ne pouvez publier que 20 images."
+  });
+}
+
+      // 🔥 (optionnel) limite biens
+      const count = await Property.countDocuments({ agentId: req.agentId });
+      const MAX_BIENS = 5;
+
+      if (count >= MAX_BIENS) {
+        return res.status(403).json({
+          message: "🚫 Vous avez atteint la limite de biens."
         });
+      }
 
-        fs.unlinkSync(file.path);
+      // ✅ ensuite upload
+      const images = req.files["images"]
+        ? await Promise.all(
+            req.files["images"].map(async file => {
+              const result = await cloudinary.uploader.upload(file.path, {
+                folder: "properties"
+              });
+              fs.unlinkSync(file.path);
+              return result.secure_url;
+            })
+          )
+        : [];
 
-        return result.secure_url;
-      })
-    )
-  : [];
+      // ... suite normale
 
-// 🔥 UPLOAD VIDEOS CLOUDINARY
-const videos = req.files["videos"]
-  ? await Promise.all(
-      req.files["videos"].map(async file => {
-        const result = await cloudinary.uploader.upload(file.path, {
-          resource_type: "video",
-          folder: "properties"
-        });
+      const videos = req.files["videos"]
+        ? await Promise.all(
+            req.files["videos"].map(async file => {
+              const result = await cloudinary.uploader.upload(file.path, {
+                resource_type: "video",
+                folder: "properties"
+              });
+              fs.unlinkSync(file.path);
+              return result.secure_url;
+            })
+          )
+        : [];
 
-        fs.unlinkSync(file.path);
-
-        return result.secure_url;
-      })
-    )
-  : [];
-
+      // 🔥 4. CREATION DU BIEN
       const property = await Property.create({
         title: req.body.title,
         city: req.body.city,
@@ -301,8 +319,10 @@ const videos = req.files["videos"]
       });
 
       res.json(property);
+
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      console.error("CREATE PROPERTY ERROR:", err);
+      res.status(500).json({ message: "Erreur serveur" });
     }
   }
 );
