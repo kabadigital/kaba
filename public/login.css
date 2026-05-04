@@ -239,3 +239,17 @@ transform:translateY(-2px);
   color: black;
   transform: translateY(-2px);
 }
+.forgot-password {
+  margin-top: 10px;
+  text-align: right;
+  font-size: 14px;
+}
+
+.forgot-password a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}

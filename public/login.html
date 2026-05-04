@@ -62,6 +62,10 @@
 
 <button type="submit">Se connecter</button>
 
+<p class="forgot-password">
+  <a href="#" id="forgotPassword">Mot de passe oublié ?</a>
+</p>
+
 </form>
 
 
@@ -80,49 +84,84 @@ Pas encore de compte ?
 
 const API = "https://api.kaba.digital";
 
-document.getElementById("loginForm").addEventListener("submit", async function(e){
+document.addEventListener("DOMContentLoaded", () => {
 
-  e.preventDefault();
+  /* ================= LOGIN ================= */
+  document.getElementById("loginForm").addEventListener("submit", async function(e){
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+    e.preventDefault();
 
-  try{
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const res = await fetch(`${API}/login`, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ email, password })
-    });
+    try{
 
-    const data = await res.json();
+      const res = await fetch(`${API}/login`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ email, password })
+      });
 
-    if(res.ok){
+      const data = await res.json();
 
-  const role = data?.agent?.role || "user";
+      if(res.ok){
 
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("role", role);
-  localStorage.setItem("userLoggedIn", "true");
+        const role = data?.agent?.role || "user";
 
-  console.log("LOGIN OK - STORAGE SET");
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", role);
+        localStorage.setItem("userLoggedIn", "true");
 
-  setTimeout(() => {
-    if(role === "admin"){
-      window.location.href = "admin.html";
-    } else {
-      window.location.href = "dashboard.html";
+        setTimeout(() => {
+          if(role === "admin"){
+            window.location.href = "admin.html";
+          } else {
+            window.location.href = "dashboard.html";
+          }
+        }, 100);
+
+      } else {
+        alert(data.message);
+      }
+
+    } catch(err){
+      console.error(err);
+      alert("Erreur serveur");
     }
-  }, 100);
 
-    } else {
-      alert(data.message);
+  });
+
+
+  /* ================= FORGOT PASSWORD ================= */
+  document.getElementById("forgotPassword").addEventListener("click", async function(e){
+    e.preventDefault();
+
+    const email = prompt("Entre ton email pour réinitialiser ton mot de passe :");
+
+    if(!email) return;
+
+    try {
+
+      const res = await fetch(`${API}/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+
+      if(res.ok){
+        alert("Email de réinitialisation envoyé !");
+      } else {
+        alert(data.message || "Erreur");
+      }
+
+    } catch(err){
+      console.error(err);
+      alert("Erreur serveur");
     }
 
-  } catch(err){
-    console.error(err);
-    alert("Erreur serveur");
-  }
+  });
 
 });
 

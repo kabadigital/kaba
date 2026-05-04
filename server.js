@@ -145,10 +145,14 @@ const agentSchema = new mongoose.Schema({
   phone: String,
   photo: String,
   role: { type: String, enum: ["agent", "courtier"], default: "agent" },
-  isBanned: { type: Boolean, default: false }, // ✅ virgule
+  isBanned: { type: Boolean, default: false },
   isCertified: { type: Boolean, default: false },
   rating: { type: Number, default: 0 },
-  totalReviews: { type: Number, default: 0 }
+  totalReviews: { type: Number, default: 0 },
+
+  // 🔥 AJOUT OBLIGATOIRE POUR RESET PASSWORD
+  resetToken: String,
+  resetTokenExpire: Date
 });
 agentSchema.methods.comparePassword = function(password) {
   return bcrypt.compare(password, this.password);
@@ -243,6 +247,69 @@ app.get("/agents", auth, async (req, res) => {
 
   const users = await Agent.find().select("-password");
   res.json(users);
+
+});
+
+app.post("/forgot-password", async (req, res) => {
+
+  const { email } = req.body;
+
+  try {
+
+    const user = await Agent.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
+    }
+
+    const crypto = require("crypto");
+    const token = crypto.randomBytes(32).toString("hex");
+
+    user.resetToken = token;
+    user.resetTokenExpire = Date.now() + 3600000; // 1h
+    await user.save();
+
+    const link = `https://kaba.digital/reset-password.html?token=${token}`;
+
+    // ⚠️ ici tu dois avoir une fonction email déjà configurée
+    console.log("RESET LINK:", link);
+
+    res.json({ message: "Email de réinitialisation envoyé" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+
+});
+
+app.post("/reset-password", async (req, res) => {
+
+  const { token, password } = req.body;
+
+  try {
+
+    const user = await Agent.findOne({
+      resetToken: token,
+      resetTokenExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Token invalide ou expiré" });
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetToken = undefined;
+    user.resetTokenExpire = undefined;
+
+    await user.save();
+
+    res.json({ message: "Mot de passe mis à jour" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 
 });
 
